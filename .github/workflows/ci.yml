@@ -1,0 +1,91 @@
+name: CI Checks
+
+# Trigger the workflow only on pushes to the main branch
+on:
+  push:
+    branches:
+      - main # Primary development branch
+
+# Define reusable environment variables
+env:
+  NODE_VERSION: "20" # Specify your project's Node.js version
+  PNPM_VERSION: 8 # Specify your project's pnpm version (matches packageManager)
+
+jobs:
+  # Install dependencies once and cache them
+  install:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js and cache pnpm dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm" # Let setup-node handle caching based on pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+  # Run linters against the codebase
+  lint:
+    name: Run Biome Lint
+    runs-on: ubuntu-latest
+    needs: install # Requires install job to finish
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js and cache pnpm dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      # Installs should be fast due to cache
+      - name: Install dependencies (from cache)
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Biome Lint
+        run: pnpm biome lint ./src
+
+  # Run tests against the codebase
+  # test:
+  #   name: Run Tests
+  #   runs-on: ubuntu-latest
+  #   needs: install # Requires install job to finish
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up pnpm
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: ${{ env.PNPM_VERSION }}
+
+  #     - name: Set up Node.js and cache pnpm dependencies
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #         cache: "pnpm"
+
+  #     # Installs should be fast due to cache
+  #     - name: Install dependencies (from cache)
+  #       run: pnpm install --frozen-lockfile
+
+  #     # TODO: Replace with actual test command
+  #     - name: Run tests
+  #       run: echo "Running tests..."
+  #       # run: pnpm test
