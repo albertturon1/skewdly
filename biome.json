@@ -23,6 +23,9 @@
 			"style": {
 				"useBlockStatements": "error",
 				"noImplicitBoolean": "error"
+			},
+			"suspicious": {
+				"noConsole": "error"
 			}
 		}
 	},
