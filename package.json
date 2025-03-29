@@ -11,7 +11,8 @@
 		"format": "biome format --write ./src",
 		"lint": "biome lint",
 		"lint:fix": "biome lint --write ./src && pnpm format",
-		"lint:fixUnsafe": "biome lint --write --unsafe ./src && pnpm format"
+		"lint:fixUnsafe": "biome lint --write --unsafe ./src && pnpm format",
+		"precommit": "pnpm tsc && pnpm format && pnpm lint"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.0.15",

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef } from "react";
 import { DrawingProvider, useDrawing } from "../features/draw/drawing-context";
 import { PrimaryToolbar } from "../features/draw/primary-toolbar";
+import { ToolOptionsToolbar } from "../features/draw/tool-options-toolbar";
 import { tools } from "../features/draw/tools";
 
 export const Route = createFileRoute("/")({
@@ -249,6 +250,7 @@ function App() {
 			<div className="w-dvw h-dvh flex flex-col bg-white overflow-hidden">
 				<PrimaryToolbar />
 				<div className="flex flex-1">
+					<ToolOptionsToolbar />
 					<Canvas />
 				</div>
 			</div>
