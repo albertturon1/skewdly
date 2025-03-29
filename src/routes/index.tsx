@@ -162,20 +162,30 @@ function Canvas() {
 			return;
 		}
 
+		const pos = getPosition(e);
+		lastPosRef.current = pos;
+
 		switch (activeTool) {
-			case toolTypes.pencil:
+			case toolTypes.pencil: {
+				// Starts a new, independent drawing path, essential for correct rendering and history snapshots.
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				ctxRef.current.beginPath();
+				ctxRef.current.arc(pos.x, pos.y, tool.strokeWidth / 2, 0, Math.PI * 2);
+				ctxRef.current.fillStyle = tool.color;
+				ctxRef.current.fill();
 				editToolProperties(toolTypes.pencil, { active: true });
 				break;
+			}
 			case toolTypes.eraser:
 				editToolProperties(toolTypes.eraser, { active: true });
 				break;
 			default:
 				break;
 		}
-
-		// Starts a new, independent drawing path, essential for correct rendering and history snapshots.
-		ctxRef.current.beginPath();
-		lastPosRef.current = getPosition(e);
 	};
 
 	const draw = (e: React.MouseEvent | React.TouchEvent) => {
@@ -217,21 +227,26 @@ function Canvas() {
 
 	const stopDrawing = () => {
 		switch (activeTool) {
-			case toolTypes.pencil:
+			case toolTypes.pencil: {
+				const tool = getTool(activeTool);
+				const canvas = canvasRef.current;
+				const ctx = ctxRef.current;
+				if (!tool.active || !canvas || !ctx) {
+					return;
+				}
+
 				editToolProperties(toolTypes.pencil, { active: false });
+
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
 				break;
-			case toolTypes.eraser:
+			}
+			case toolTypes.eraser: {
 				// editToolProperties(toolTypes.eraser, { active: false });
 				break;
+			}
 			default:
 				break;
-		}
-
-		const canvas = canvasRef.current;
-		const ctx = ctxRef.current;
-		if (canvas && ctx) {
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			pushToHistory(imageData);
 		}
 	};
 
