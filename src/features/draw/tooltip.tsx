@@ -116,10 +116,7 @@ export function Tooltip({ content, children }: TooltipProps) {
 				ref={tooltipRef}
 				role="tooltip"
 				style={{ top: `${position.top}px`, left: `${position.left}px` }}
-				className={`
-          fixed z-50 transition-opacity duration-200
-          ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}
-        `}
+				className={`fixed z-99 transition-opacity duration-200 ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
 			>
 				{/* Tooltip Box */}
 				<div className="relative bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">

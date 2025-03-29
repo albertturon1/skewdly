@@ -3,69 +3,25 @@ import {
 	useContext,
 	useState,
 	useCallback,
-	useEffect,
 	useMemo,
 	useReducer,
 } from "react";
 import type { ReactNode } from "react";
-import { tools, type Tool } from "./tools";
+import type { toolsInitialState, Tool } from "./tools";
+import { INITIAL_HISTORY_STATE, historyReducer } from "./history";
 
-interface HistoryState {
-	stack: ImageData[];
-	index: number;
-}
-
-const INITIAL_HISTORY_STATE: HistoryState = { stack: [], index: -1 };
-
-type HistoryAction =
-	| { type: "PUSH"; payload: ImageData }
-	| { type: "UNDO" }
-	| { type: "REDO" }
-	| { type: "CLEAR" };
-
-function historyReducer(
-	state: HistoryState,
-	action: HistoryAction,
-): HistoryState {
-	switch (action.type) {
-		case "PUSH": {
-			const { stack, index } = state;
-			const newStack = stack.slice(0, index + 1);
-			newStack.push(action.payload);
-			return { stack: newStack, index: newStack.length - 1 };
-		}
-		case "UNDO": {
-			if (state.index <= 0) {
-				return state; // Cannot undo
-			}
-			return { ...state, index: state.index - 1 };
-		}
-		case "REDO": {
-			if (state.index >= state.stack.length - 1) {
-				return state; // Cannot redo
-			}
-			return { ...state, index: state.index + 1 };
-		}
-		case "CLEAR": {
-			const { stack } = state;
-			return { stack: stack.slice(0, 1), index: 0 };
-		}
-		default: {
-			throw new Error(`Unhandled action type: ${action}`);
-		}
-	}
-}
-
-interface DrawingContextProps {
-	color: string;
-	setColor: (color: string) => void;
-	strokeWidth: number;
-	setStrokeWidth: (width: number) => void;
-	tool: Tool;
-	setTool: (tool: Tool) => void;
-	isDrawing: boolean;
-	setIsDrawing: (isDrawing: boolean) => void;
+interface DrawingContextProps<Tools extends GenericTools> {
+	editToolProperties: <Name extends keyof Tools["tools"]>(
+		name: Name,
+		toolProperties: Partial<Tools["tools"][Name]["properties"]>,
+	) => void;
+	activeTool: Tools["activeTool"];
+	getTool: <Name extends keyof Tools["tools"]>(
+		name: Name,
+	) => Tools["tools"][Name]["properties"];
+	setActiveTool: <Name extends keyof Tools["tools"]>(tool: Name) => void;
 	currentImageData: ImageData | null;
+	currentHistoryIndex: number;
 	pushToHistory: (imageData: ImageData) => void;
 	undo: () => void;
 	redo: () => void;
@@ -74,25 +30,101 @@ interface DrawingContextProps {
 	clearCanvas: () => void;
 }
 
-const DrawingContext = createContext<DrawingContextProps | null>(null);
+// biome-ignore lint/suspicious/noExplicitAny: generic type for context
+const DrawingContext = createContext<DrawingContextProps<any> | null>(null);
 
-const DEFAULT_COLOR = "#000000";
-const DEFAULT_STROKE_WIDTH = 2;
+export type GenericTools = { activeTool: string; tools: Record<string, Tool> };
 
-export function DrawingProvider({ children }: { children: ReactNode }) {
-	const [color, setColor] = useState(() => {
-		const savedColor = localStorage.getItem("drawingColor");
-		return savedColor || DEFAULT_COLOR;
+const deepMerge = (
+	target: Record<string, unknown>,
+	source: Record<string, unknown>,
+): Record<string, unknown> => {
+	if (
+		typeof target !== "object" ||
+		target === null ||
+		typeof source !== "object" ||
+		source === null
+	) {
+		return source;
+	}
+
+	const result: Record<string, unknown> = { ...target };
+
+	for (const key of Object.keys(source)) {
+		if (
+			typeof source[key] === "object" &&
+			source[key] !== null &&
+			typeof target[key] === "object" &&
+			target[key] !== null
+		) {
+			result[key] = deepMerge(
+				target[key] as Record<string, unknown>,
+				source[key] as Record<string, unknown>,
+			);
+		} else {
+			result[key] = source[key];
+		}
+	}
+
+	return result;
+};
+
+export function DrawingProvider<const Tools extends GenericTools>({
+	children,
+	tools: initialTools,
+}: { children: ReactNode; tools: Tools }) {
+	const [tools, setTools] = useState<Tools>(() => {
+		const storedTools = localStorage.getItem("tools");
+		if (!storedTools) {
+			return initialTools;
+		}
+
+		// TODO: Check if the stored tools are compatible with the initial tools
+		return deepMerge(initialTools, JSON.parse(storedTools)) as Tools;
 	});
-	const [strokeWidth, setStrokeWidth] = useState(() => {
-		const savedWidth = localStorage.getItem("strokeWidth");
-		const strWidth = Number(savedWidth);
-		return strWidth && !Number.isNaN(strWidth)
-			? strWidth
-			: DEFAULT_STROKE_WIDTH;
-	});
-	const [tool, setTool] = useState<Tool>(tools.pencil);
-	const [isDrawing, setIsDrawing] = useState(false);
+
+	const setActiveTool: DrawingContextProps<Tools>["setActiveTool"] =
+		useCallback((tool) => {
+			setTools((prev) => ({ ...prev, activeTool: tool }));
+		}, []);
+
+	const getTool: DrawingContextProps<Tools>["getTool"] = useCallback(
+		(name) => {
+			return tools.tools[name as keyof typeof tools.tools].properties;
+		},
+		[tools.tools],
+	);
+
+	const editToolProperties: DrawingContextProps<Tools>["editToolProperties"] =
+		useCallback((name, toolProperties) => {
+			setTools((prev) => {
+				const currentToolProperties =
+					prev.tools[name as keyof typeof prev.tools].properties;
+				const newToolProperties = Object.assign(
+					{},
+					currentToolProperties,
+					toolProperties,
+				);
+
+				const final = {
+					...prev,
+					tools: {
+						...prev.tools,
+						[name]: {
+							...prev.tools[name as keyof typeof prev.tools],
+							properties: newToolProperties,
+						},
+					},
+				};
+
+				localStorage.setItem("tools", JSON.stringify(final));
+				return final;
+			});
+		}, []);
+
+	const activeTool = useMemo(() => {
+		return tools.activeTool;
+	}, [tools.activeTool]);
 
 	const [historyState, dispatchHistory] = useReducer(
 		historyReducer,
@@ -124,42 +156,12 @@ export function DrawingProvider({ children }: { children: ReactNode }) {
 		dispatchHistory({ type: "CLEAR" });
 	}, []);
 
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if ((e.metaKey || e.ctrlKey) && e.key === "z" && !isDrawing) {
-				e.preventDefault();
-				if (e.shiftKey) {
-					redo();
-				} else {
-					undo();
-				}
-			}
-		};
-		window.addEventListener("keydown", handleKeyDown);
-		return () => {
-			window.removeEventListener("keydown", handleKeyDown);
-		};
-	}, [undo, redo, isDrawing]);
-
-	const handleSetColor = useCallback((color: string) => {
-		setColor(color);
-		localStorage.setItem("drawingColor", color);
-	}, []);
-	const handleSetStrokeWidth = useCallback((width: number) => {
-		setStrokeWidth(width);
-		localStorage.setItem("strokeWidth", width.toString());
-	}, []);
-
-	const value = useMemo(
+	const value: DrawingContextProps<Tools> = useMemo(
 		() => ({
-			color,
-			setColor: handleSetColor,
-			strokeWidth,
-			setStrokeWidth: handleSetStrokeWidth,
-			tool,
-			setTool,
-			isDrawing,
-			setIsDrawing,
+			setActiveTool,
+			editToolProperties,
+			activeTool,
+			getTool,
 			currentImageData,
 			canUndo,
 			canRedo,
@@ -167,21 +169,21 @@ export function DrawingProvider({ children }: { children: ReactNode }) {
 			undo,
 			redo,
 			clearCanvas,
+			currentHistoryIndex,
 		}),
 		[
-			color,
-			handleSetColor,
-			strokeWidth,
-			handleSetStrokeWidth,
-			tool,
-			isDrawing,
 			currentImageData,
 			canUndo,
 			canRedo,
+			activeTool,
+			editToolProperties,
 			pushToHistory,
+			setActiveTool,
 			undo,
 			redo,
 			clearCanvas,
+			getTool,
+			currentHistoryIndex,
 		],
 	);
 
@@ -191,7 +193,9 @@ export function DrawingProvider({ children }: { children: ReactNode }) {
 }
 
 export function useDrawing() {
-	const context = useContext(DrawingContext);
+	const context = useContext(DrawingContext) as DrawingContextProps<
+		typeof toolsInitialState
+	>;
 	if (!context) {
 		throw new Error("useDrawing must be used within a DrawingProvider");
 	}

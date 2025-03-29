@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DrawingProvider, useDrawing } from "../features/draw/drawing-context";
 import { PrimaryToolbar } from "../features/draw/primary-toolbar";
-import { ToolOptionsToolbar } from "../features/draw/tool-options-toolbar";
-import { tools } from "../features/draw/tools";
+import { ToolOptions } from "../features/draw/tool-options";
+import { toolsInitialState, toolTypes } from "../features/draw/tools";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -32,13 +32,13 @@ function Canvas() {
 	const didMountRef = useRef(false);
 
 	const {
-		tool,
-		isDrawing,
-		setIsDrawing,
-		color,
-		strokeWidth,
+		activeTool,
 		currentImageData,
 		pushToHistory,
+		editToolProperties,
+		getTool,
+		undo,
+		redo,
 	} = useDrawing();
 
 	// Effect runs once on mount to set up the canvas dimensions and context.
@@ -65,29 +65,29 @@ function Canvas() {
 		}
 	}, []);
 
-	const drawGrid = useCallback((ctx: CanvasRenderingContext2D) => {
-		ctx.save(); // Save current context state (like strokeStyle)
-		ctx.strokeStyle = "#ddd"; // Light grey color for the grid
-		ctx.lineWidth = 1;
+	// const drawGrid = useCallback((ctx: CanvasRenderingContext2D) => {
+	// 	ctx.save();
+	// 	ctx.strokeStyle = "#E0DCD3";
+	// 	ctx.lineWidth = 1;
 
-		// Draw vertical lines
-		for (let x = 0; x <= INITIAL_WIDTH; x += 50) {
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, INITIAL_HEIGHT); // Use constant for height
-			ctx.stroke();
-		}
+	// 	// Draw vertical lines
+	// 	for (let x = 0; x <= INITIAL_WIDTH; x += 50) {
+	// 		ctx.beginPath();
+	// 		ctx.moveTo(x, 0);
+	// 		ctx.lineTo(x, INITIAL_HEIGHT);
+	// 		ctx.stroke();
+	// 	}
 
-		// Draw horizontal lines
-		for (let y = 0; y <= INITIAL_HEIGHT; y += 50) {
-			ctx.beginPath();
-			ctx.moveTo(0, y);
-			ctx.lineTo(INITIAL_WIDTH, y); // Use constant for width
-			ctx.stroke();
-		}
+	// 	// Draw horizontal lines
+	// 	for (let y = 0; y <= INITIAL_HEIGHT; y += 50) {
+	// 		ctx.beginPath();
+	// 		ctx.moveTo(0, y);
+	// 		ctx.lineTo(INITIAL_WIDTH, y);
+	// 		ctx.stroke();
+	// 	}
 
-		ctx.restore(); // Restore context state
-	}, []);
+	// 	ctx.restore();
+	// }, []);
 
 	// Sets up the initial canvas state (styling, grid) and saves the first history snapshot.
 	const setupCanvas = useCallback(() => {
@@ -100,9 +100,6 @@ function Canvas() {
 		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
 
-		// Draw the initial background grid.
-		drawGrid(ctx);
-
 		// Capture the initial blank state (just the grid) as the first history entry.
 		const initialState = ctx.getImageData(
 			0,
@@ -112,7 +109,7 @@ function Canvas() {
 		);
 		// Push this initial state into the history.
 		pushToHistory(initialState);
-	}, [drawGrid, pushToHistory]);
+	}, [pushToHistory]);
 
 	// It keeps the visual canvas synchronized with the application state managed by the DrawingProvider.
 	useEffect(() => {
@@ -125,22 +122,11 @@ function Canvas() {
 		// Clear the canvas completely before redrawing.
 		ctx.clearRect(0, 0, INITIAL_WIDTH, INITIAL_HEIGHT);
 
-		// Redraw the background grid.
-		drawGrid(ctx);
-
-		// Re-apply the current drawing settings (color, line width, etc.).
-		// This is needed because clearRect might reset some context properties,
-		// and settings might have changed since the last draw.
-		ctx.strokeStyle = color;
-		ctx.lineWidth = strokeWidth;
-		ctx.lineCap = "round";
-		ctx.lineJoin = "round";
-
 		// If there's a drawing state from history, paint it onto the canvas.
 		if (currentImageData) {
 			ctx.putImageData(currentImageData, 0, 0);
 		}
-	}, [currentImageData, color, strokeWidth, drawGrid]);
+	}, [currentImageData]);
 
 	// Calculates the pointer's X, Y coordinates relative to the canvas,
 	// accounting for the container's scroll position and offset.
@@ -172,72 +158,115 @@ function Canvas() {
 	};
 
 	const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-		setIsDrawing(true);
-		const pos = getPosition(e);
-		lastPosRef.current = pos; // Store it for the next segment.
-
-		// Pencil-specific start logic (if any was needed)
-		if (!ctxRef.current || tool.type !== tools.pencil.type) {
+		if (!ctxRef.current) {
 			return;
 		}
-		// For pencil, start a new path immediately.
+
+		switch (activeTool) {
+			case toolTypes.pencil:
+				editToolProperties(toolTypes.pencil, { active: true });
+				break;
+			case toolTypes.eraser:
+				editToolProperties(toolTypes.eraser, { active: true });
+				break;
+			default:
+				break;
+		}
+
+		// Starts a new, independent drawing path, essential for correct rendering and history snapshots.
 		ctxRef.current.beginPath();
+		lastPosRef.current = getPosition(e);
 	};
 
 	const draw = (e: React.MouseEvent | React.TouchEvent) => {
-		if (!isDrawing || !ctxRef.current) {
-			// Only draw if the mouse button is down/touch is active.
+		const ctx = ctxRef.current;
+		if (!ctx) {
 			return;
 		}
 
 		const pos = getPosition(e);
-		const ctx = ctxRef.current;
 
-		if (tool.type === tools.pencil.type) {
-			// For the pencil, draw a line segment from the last position to the current one.
-			ctx.beginPath(); // Start a new path segment
-			ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y);
-			ctx.lineTo(pos.x, pos.y);
-			ctx.stroke(); // Draw the line on the canvas
+		switch (activeTool) {
+			case toolTypes.pencil: {
+				const tool = getTool(activeTool);
+				if (!tool.active) {
+					return;
+				}
+
+				ctx.beginPath();
+				ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y);
+				ctx.lineTo(pos.x, pos.y);
+				ctx.lineWidth = tool.strokeWidth;
+				ctx.strokeStyle = tool.color;
+				ctx.stroke();
+				lastPosRef.current = pos;
+				break;
+			}
+			case toolTypes.eraser: {
+				// TODO: Implement eraser
+				break;
+			}
+			default: {
+				break;
+			}
 		}
 
-		lastPosRef.current = pos; // Update the last position for the next segment.
+		// Keep it after the switch to avoid any potential issues.
+		lastPosRef.current = pos;
 	};
 
-	// Called when the mouse button is released, touch ends, or pointer leaves the canvas.
 	const stopDrawing = () => {
-		if (!isDrawing) {
-			// Prevent saving state if we weren't actually drawing (e.g., mouseOut triggered early).
-			return;
+		switch (activeTool) {
+			case toolTypes.pencil:
+				editToolProperties(toolTypes.pencil, { active: false });
+				break;
+			case toolTypes.eraser:
+				// editToolProperties(toolTypes.eraser, { active: false });
+				break;
+			default:
+				break;
 		}
-		setIsDrawing(false);
 
-		// Capture the current state of the canvas as an ImageData object.
 		const canvas = canvasRef.current;
 		const ctx = ctxRef.current;
 		if (canvas && ctx) {
 			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			// Push this final state into our history via the context.
 			pushToHistory(imageData);
 		}
 	};
 
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+				e.preventDefault();
+				if (e.shiftKey) {
+					redo();
+				} else {
+					undo();
+				}
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [undo, redo]);
+
 	// Render the scrollable container and the canvas element within it.
 	// Attach all the necessary event handlers for mouse and touch input.
 	return (
-		<div ref={containerRef} className="flex flex-1 bg-blue-300 overflow-auto">
+		<div ref={containerRef} className="flex flex-1 bg-[#F0EDE5] overflow-auto">
 			<canvas
 				ref={canvasRef}
 				className="flex flex-1"
 				onMouseDown={startDrawing}
 				onMouseMove={draw}
 				onMouseUp={stopDrawing}
-				onMouseOut={stopDrawing} // Stop drawing if mouse leaves canvas
-				onBlur={stopDrawing} // Stop drawing if canvas loses focus
+				onMouseOut={stopDrawing}
+				onBlur={stopDrawing}
 				onTouchStart={startDrawing}
 				onTouchMove={draw}
 				onTouchEnd={stopDrawing}
-				// Prevent default touch actions like scrolling when drawing on the canvas
 				style={{ touchAction: "none" }}
 			/>
 		</div>
@@ -245,12 +274,18 @@ function Canvas() {
 }
 
 function App() {
+	const [tools] = useState(toolsInitialState);
+
 	return (
-		<DrawingProvider>
-			<div className="w-dvw h-dvh flex flex-col bg-white overflow-hidden">
-				<PrimaryToolbar />
-				<div className="flex flex-1">
-					<ToolOptionsToolbar />
+		<DrawingProvider tools={tools}>
+			<div className="w-dvw h-dvh flex flex-col bg-white overflow-hidden relative">
+				<div className="absolute top-0 left-0 right-0 z-10">
+					<PrimaryToolbar />
+				</div>
+				<div className="absolute top-[59px] left-0 bottom-0 z-10">
+					<ToolOptions />
+				</div>
+				<div className="absolute inset-0">
 					<Canvas />
 				</div>
 			</div>
