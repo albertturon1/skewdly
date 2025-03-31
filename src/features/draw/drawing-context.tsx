@@ -9,11 +9,12 @@ import {
 import type { ReactNode } from "react";
 import type { toolsInitialState, Tool } from "./tools";
 import { INITIAL_HISTORY_STATE, historyReducer } from "./history";
+import type { PartialDeep } from "type-fest";
 
 interface DrawingContextProps<Tools extends GenericTools> {
 	editToolProperties: <Name extends keyof Tools["tools"]>(
 		name: Name,
-		toolProperties: Partial<Tools["tools"][Name]["properties"]>,
+		toolProperties: PartialDeep<Tools["tools"][Name]["properties"]>,
 	) => void;
 	activeTool: Tools["activeTool"];
 	getTool: <Name extends keyof Tools["tools"]>(

@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { DrawingProvider, useDrawing } from "../features/draw/drawing-context";
 import { PrimaryToolbar } from "../features/draw/primary-toolbar";
 import { ToolOptions } from "../features/draw/tool-options";
 import { toolsInitialState, toolTypes } from "../features/draw/tools";
+import { useRef, useEffect, useCallback } from "react";
+import { EraserCursor } from "../features/draw/tools/eraser";
 
 export const Route = createFileRoute("/")({
 	component: App,
 });
 
-const INITIAL_WIDTH = 2000;
-const INITIAL_HEIGHT = 2000;
+const INITIAL_SIZE = 2000;
 
 /**
  * The main Canvas component handles user input (mouse/touch), interacts with the DrawingContext,
@@ -39,6 +39,7 @@ function Canvas() {
 		getTool,
 		undo,
 		redo,
+		canUndo,
 	} = useDrawing();
 
 	// Effect runs once on mount to set up the canvas dimensions and context.
@@ -53,8 +54,8 @@ function Canvas() {
 		}
 
 		// Set the actual size of the canvas element.
-		canvas.width = INITIAL_WIDTH;
-		canvas.height = INITIAL_HEIGHT;
+		canvas.width = INITIAL_SIZE;
+		canvas.height = INITIAL_SIZE;
 		ctxRef.current = canvasContext;
 
 		// This guard ensures setupCanvas runs only once, preventing issues in Strict Mode
@@ -120,7 +121,7 @@ function Canvas() {
 		}
 
 		// Clear the canvas completely before redrawing.
-		ctx.clearRect(0, 0, INITIAL_WIDTH, INITIAL_HEIGHT);
+		ctx.clearRect(0, 0, INITIAL_SIZE, INITIAL_SIZE);
 
 		// If there's a drawing state from history, paint it onto the canvas.
 		if (currentImageData) {
@@ -158,31 +159,53 @@ function Canvas() {
 	};
 
 	const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-		if (!ctxRef.current) {
+		const ctx = ctxRef.current;
+		if (!ctx) {
 			return;
 		}
 
+		// Get the exact x and y coordinates of the user's click or touch
 		const pos = getPosition(e);
+
+		// Save the current position to track the previous point for smooth drawing.
 		lastPosRef.current = pos;
 
 		switch (activeTool) {
 			case toolTypes.pencil: {
-				// Starts a new, independent drawing path, essential for correct rendering and history snapshots.
 				const tool = getTool(activeTool);
 				if (tool.active) {
 					return;
 				}
 
-				ctxRef.current.beginPath();
-				ctxRef.current.arc(pos.x, pos.y, tool.strokeWidth / 2, 0, Math.PI * 2);
-				ctxRef.current.fillStyle = tool.color;
-				ctxRef.current.fill();
+				// Draw initial circle at the starting point
+				ctx.beginPath();
+				// Draw a small circle (arc()) at pos.x, pos.y with half of stroke width as the radius
+				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2);
+				// Set the fill color to the tool's color
+				ctx.fillStyle = tool.color.value;
+				// Fill the circle with the color
+				ctx.fill();
 				editToolProperties(toolTypes.pencil, { active: true });
 				break;
 			}
-			case toolTypes.eraser:
+			case toolTypes.eraser: {
+				const tool = getTool(activeTool);
+				// Don't allow erasing if there's nothing to undo (only initial state exists)
+				if (tool.active || !canUndo) {
+					return;
+				}
+
 				editToolProperties(toolTypes.eraser, { active: true });
+
+				ctx.save(); // Save the current state of the canvas
+				ctx.globalCompositeOperation = "destination-out"; // Change the drawing mode to "destination-out", which erases instead of drawing.
+				ctx.beginPath(); // Start a new shape
+				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2); // Draw a circle at the starting position
+				ctx.fill(); // Erase at the initial touch point
+				ctx.restore(); // Restore the original state of the canvas
+
 				break;
+			}
 			default:
 				break;
 		}
@@ -195,34 +218,60 @@ function Canvas() {
 		}
 
 		const pos = getPosition(e);
+		const lastPos = lastPosRef.current;
 
 		switch (activeTool) {
 			case toolTypes.pencil: {
 				const tool = getTool(activeTool);
+
 				if (!tool.active) {
 					return;
 				}
 
 				ctx.beginPath();
-				ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y);
-				ctx.lineTo(pos.x, pos.y);
-				ctx.lineWidth = tool.strokeWidth;
-				ctx.strokeStyle = tool.color;
-				ctx.stroke();
-				lastPosRef.current = pos;
+				ctx.moveTo(lastPos.x, lastPos.y); // Move to the previous position
+				ctx.lineTo(pos.x, pos.y); // Draw a line to the new position
+				ctx.lineWidth = tool.stroke.width; // Set the line width to the tool's stroke width
+				ctx.strokeStyle = tool.color.value; // Set the stroke color to the tool's color
+				ctx.stroke(); // Draw the line
+				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2); // Draw a small circle at the new position
+				ctx.fillStyle = tool.color.value; // Set the fill color to the tool's color
+				ctx.fill(); // Fill the circle
 				break;
 			}
 			case toolTypes.eraser: {
-				// TODO: Implement eraser
+				const tool = getTool(activeTool);
+				// Don't allow erasing if there's nothing to undo (only initial state exists)
+				if (!tool.active || !canUndo) {
+					return;
+				}
+
+				ctx.save();
+				ctx.globalCompositeOperation = "destination-out";
+
+				// START Erase continuously by drawing a line between lastPos and pos
+				ctx.beginPath();
+				ctx.moveTo(lastPos.x, lastPos.y);
+				ctx.lineTo(pos.x, pos.y);
+				ctx.lineWidth = tool.stroke.width;
+				ctx.stroke();
+				// END Erase continuously by drawing a line between lastPos and pos
+
+				// START Erase a circular shape
+				ctx.beginPath();
+				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2);
+				ctx.fill();
+				// END Erase a circular shape
+
+				ctx.globalCompositeOperation = "source-over"; // Switch back to normal drawing mode
+				ctx.restore(); // Restore saved state so future operations work normally
 				break;
 			}
-			default: {
+			default:
 				break;
-			}
 		}
 
-		// Keep it after the switch to avoid any potential issues.
-		lastPosRef.current = pos;
+		lastPosRef.current = pos; // Update lastPosRef to store the current cursor position for the next draw call
 	};
 
 	const stopDrawing = () => {
@@ -242,7 +291,19 @@ function Canvas() {
 				break;
 			}
 			case toolTypes.eraser: {
-				// editToolProperties(toolTypes.eraser, { active: false });
+				const tool = getTool(activeTool);
+				const canvas = canvasRef.current;
+				const ctx = ctxRef.current;
+
+				if (!tool.active || !canvas || !ctx || !canUndo) {
+					return;
+				}
+
+				editToolProperties(toolTypes.eraser, { active: false });
+
+				// Save the state after erasing
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
 				break;
 			}
 			default:
@@ -267,13 +328,25 @@ function Canvas() {
 		};
 	}, [undo, redo]);
 
+	function getCursor() {
+		switch (activeTool) {
+			case toolTypes.eraser:
+				// return 'url("/eraser.svg") -10 -10, auto';
+				return EraserCursor(getTool(activeTool).stroke.width);
+			case toolTypes.pencil:
+				return "crosshair";
+			default:
+				return "default";
+		}
+	}
+
 	// Render the scrollable container and the canvas element within it.
 	// Attach all the necessary event handlers for mouse and touch input.
 	return (
 		<div ref={containerRef} className="flex flex-1 bg-[#F0EDE5] overflow-auto">
 			<canvas
 				ref={canvasRef}
-				className="flex flex-1"
+				className={"flex flex-1"}
 				onMouseDown={startDrawing}
 				onMouseMove={draw}
 				onMouseUp={stopDrawing}
@@ -282,17 +355,15 @@ function Canvas() {
 				onTouchStart={startDrawing}
 				onTouchMove={draw}
 				onTouchEnd={stopDrawing}
-				style={{ touchAction: "none" }}
+				style={{ touchAction: "none", cursor: getCursor() }}
 			/>
 		</div>
 	);
 }
 
 function App() {
-	const [tools] = useState(toolsInitialState);
-
 	return (
-		<DrawingProvider tools={tools}>
+		<DrawingProvider tools={toolsInitialState}>
 			<div className="w-dvw h-dvh flex flex-col bg-white overflow-hidden relative">
 				<div className="absolute top-0 left-0 right-0 z-10">
 					<PrimaryToolbar />
