@@ -1,8 +1,8 @@
-import { useDrawing } from "./drawing-context";
+import { useTools } from "./tools-context";
 import { Tooltip } from "./tooltip";
 
 export function HistoryControllers() {
-	const { undo, redo, clearCanvas, canRedo, canUndo } = useDrawing();
+	const { undo, redo, clearCanvas, canRedo, canUndo } = useTools();
 
 	return (
 		<>

@@ -1,10 +1,10 @@
-import { useDrawing } from "./drawing-context";
+import { useTools } from "./tools-context";
 import { EraserOptions } from "./tool-options/eraser-options";
 import { PencilOptions } from "./tool-options/pencil-options";
 import { toolTypes } from "./tools";
 
 export function ToolOptions() {
-	const { activeTool } = useDrawing();
+	const { activeTool } = useTools();
 
 	switch (activeTool) {
 		case toolTypes.pencil: {

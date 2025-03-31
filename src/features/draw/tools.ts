@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { GenericTools } from "./drawing-context";
+import type { GenericTools } from "./tools-context";
 import { eraser } from "./tools/eraser";
 import { pencil } from "./tools/pencil";
 

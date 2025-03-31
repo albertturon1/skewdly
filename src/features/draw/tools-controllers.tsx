@@ -1,9 +1,9 @@
-import { useDrawing } from "./drawing-context";
+import { useTools } from "./tools-context";
 import { tools } from "./tools";
 import { Tooltip } from "./tooltip";
 
 export function ToolsControllers() {
-	const { activeTool, setActiveTool } = useDrawing();
+	const { activeTool, setActiveTool } = useTools();
 
 	return (
 		<div className="border border-gray-200 rounded-md overflow-hidden flex">

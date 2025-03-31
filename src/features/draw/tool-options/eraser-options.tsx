@@ -1,11 +1,11 @@
-import { useDrawing } from "../drawing-context";
+import { useTools } from "../tools-context";
 import { toolTypes } from "../tools";
 import { eraserStrokeWidthsArray } from "../tools/eraser";
 import { Tooltip } from "../tooltip";
 import { ToolOptionsWrapper } from "./tool-options-wrapper";
 
 export function EraserOptions() {
-	const { editToolProperties, getTool } = useDrawing();
+	const { editToolProperties, getTool } = useTools();
 
 	const eraserTool = getTool(toolTypes.eraser);
 

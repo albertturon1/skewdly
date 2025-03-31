@@ -1,4 +1,4 @@
-import { useDrawing } from "../drawing-context";
+import { useTools } from "../tools-context";
 import { toolTypes } from "../tools";
 import { pencilColorsArray } from "../tools/pencil";
 import { pencilStrokeWidthsArray } from "../tools/pencil";
@@ -6,7 +6,7 @@ import { Tooltip } from "../tooltip";
 import { ToolOptionsWrapper } from "./tool-options-wrapper";
 
 export function PencilOptions() {
-	const { editToolProperties, getTool } = useDrawing();
+	const { editToolProperties, getTool } = useTools();
 
 	const pencilTool = getTool(toolTypes.pencil);
 
