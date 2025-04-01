@@ -11,6 +11,8 @@ import type { toolsInitialState, Tool } from "./tools";
 import { INITIAL_HISTORY_STATE, historyReducer } from "./history";
 import type { PartialDeep } from "type-fest";
 
+export type GenericTools = { activeTool: string; tools: Record<string, Tool> };
+
 interface ToolContextProps<Tools extends GenericTools> {
 	editToolProperties: <Name extends keyof Tools["tools"]>(
 		name: Name,
@@ -33,8 +35,6 @@ interface ToolContextProps<Tools extends GenericTools> {
 
 // biome-ignore lint/suspicious/noExplicitAny: generic type for context
 const ToolContext = createContext<ToolContextProps<any> | null>(null);
-
-export type GenericTools = { activeTool: string; tools: Record<string, Tool> };
 
 export function ToolsProvider<const Tools extends GenericTools>({
 	children,

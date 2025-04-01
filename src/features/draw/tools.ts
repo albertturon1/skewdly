@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import type { GenericTools } from "./tools-context";
 import { eraser } from "./tools/eraser";
 import { pencil } from "./tools/pencil";
+import { rectangle } from "./tools/rectangle";
 
 export interface Tool {
 	name: string;
@@ -26,17 +27,7 @@ export type ToolColor = Readonly<{
 export const tools = {
 	pencil,
 	eraser,
-	// rectangle: {
-	// 	type: "rectangle" as const,
-	// 	name: "Rectangle",
-	// 	icon: "□",
-	// 	tooltip: "Draw rectangle",
-	// 	properties: {
-	// 		strokeWidth: strokeWidths.thick.width,
-	// 		color: "#000000",
-	// 		active: false as boolean,
-	// 	},
-	// },
+	rectangle,
 	// select: {
 	//   name: "Select",
 	//   icon: "☐",

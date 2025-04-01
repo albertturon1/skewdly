@@ -198,6 +198,19 @@ export function Canvas() {
 
 				break;
 			}
+			case toolTypes.rectangle: {
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.rectangle, {
+					active: true,
+					startX: pos.x,
+					startY: pos.y,
+				});
+				break;
+			}
 			default:
 				break;
 		}
@@ -259,6 +272,30 @@ export function Canvas() {
 				ctx.restore(); // Restore saved state so future operations work normally
 				break;
 			}
+			case toolTypes.rectangle: {
+				const tool = getTool(activeTool);
+				const canvas = canvasRef.current;
+				if (!tool.active || !canvas) {
+					return;
+				}
+
+				// Clear the canvas and redraw the previous state
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (currentImageData) {
+					ctx.putImageData(currentImageData, 0, 0);
+				}
+
+				// Calculate rectangle dimensions
+				const width = pos.x - tool.startX;
+				const height = pos.y - tool.startY;
+
+				// Draw the new rectangle
+				ctx.beginPath();
+				ctx.strokeStyle = tool.color.value;
+				ctx.lineWidth = tool.stroke.size;
+				ctx.strokeRect(tool.startX, tool.startY, width, height);
+				break;
+			}
 			default:
 				break;
 		}
@@ -294,6 +331,22 @@ export function Canvas() {
 				editToolProperties(toolTypes.eraser, { active: false });
 
 				// Save the state after erasing
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
+				break;
+			}
+			case toolTypes.rectangle: {
+				const tool = getTool(activeTool);
+				const canvas = canvasRef.current;
+				const ctx = ctxRef.current;
+
+				if (!tool.active || !canvas || !ctx) {
+					return;
+				}
+
+				editToolProperties(toolTypes.rectangle, { active: false });
+
+				// Save the state after drawing the rectangle
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				pushToHistory(imageData);
 				break;

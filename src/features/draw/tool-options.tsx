@@ -1,6 +1,7 @@
 import { useTools } from "./tools-context";
 import { EraserOptions } from "./tool-options/eraser-options";
 import { PencilOptions } from "./tool-options/pencil-options";
+import { RectangleOptions } from "./tool-options/rectangle-options";
 import { toolTypes } from "./tools";
 
 export function ToolOptions() {
@@ -18,6 +19,13 @@ export function ToolOptions() {
 			return (
 				<ToolOptionsComponentWrapper>
 					<EraserOptions />
+				</ToolOptionsComponentWrapper>
+			);
+		}
+		case toolTypes.rectangle: {
+			return (
+				<ToolOptionsComponentWrapper>
+					<RectangleOptions />
 				</ToolOptionsComponentWrapper>
 			);
 		}
