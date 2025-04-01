@@ -13,7 +13,7 @@ export interface Tool {
 }
 
 export interface ToolStrokeWidth {
-	width: number;
+	size: number;
 	tooltip: string;
 }
 

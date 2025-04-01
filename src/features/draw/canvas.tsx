@@ -172,7 +172,7 @@ export function Canvas() {
 				// Draw initial circle at the starting point
 				ctx.beginPath();
 				// Draw a small circle (arc()) at pos.x, pos.y with half of stroke width as the radius
-				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2);
+				ctx.arc(pos.x, pos.y, tool.stroke.size / 2, 0, Math.PI * 2);
 				// Set the fill color to the tool's color
 				ctx.fillStyle = tool.color.value;
 				// Fill the circle with the color
@@ -192,7 +192,7 @@ export function Canvas() {
 				ctx.save(); // Save the current state of the canvas
 				ctx.globalCompositeOperation = "destination-out"; // Change the drawing mode to "destination-out", which erases instead of drawing.
 				ctx.beginPath(); // Start a new shape
-				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2); // Draw a circle at the starting position
+				ctx.arc(pos.x, pos.y, tool.stroke.size / 2, 0, Math.PI * 2); // Draw a circle at the starting position
 				ctx.fill(); // Erase at the initial touch point
 				ctx.restore(); // Restore the original state of the canvas
 
@@ -223,10 +223,10 @@ export function Canvas() {
 				ctx.beginPath();
 				ctx.moveTo(lastPos.x, lastPos.y); // Move to the previous position
 				ctx.lineTo(pos.x, pos.y); // Draw a line to the new position
-				ctx.lineWidth = tool.stroke.width; // Set the line width to the tool's stroke width
+				ctx.lineWidth = tool.stroke.size; // Set the line width to the tool's stroke width
 				ctx.strokeStyle = tool.color.value; // Set the stroke color to the tool's color
 				ctx.stroke(); // Draw the line
-				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2); // Draw a small circle at the new position
+				ctx.arc(pos.x, pos.y, tool.stroke.size / 2, 0, Math.PI * 2); // Draw a small circle at the new position
 				ctx.fillStyle = tool.color.value; // Set the fill color to the tool's color
 				ctx.fill(); // Fill the circle
 				break;
@@ -245,13 +245,13 @@ export function Canvas() {
 				ctx.beginPath();
 				ctx.moveTo(lastPos.x, lastPos.y);
 				ctx.lineTo(pos.x, pos.y);
-				ctx.lineWidth = tool.stroke.width;
+				ctx.lineWidth = tool.stroke.size;
 				ctx.stroke();
 				// END Erase continuously by drawing a line between lastPos and pos
 
 				// START Erase a circular shape
 				ctx.beginPath();
-				ctx.arc(pos.x, pos.y, tool.stroke.width / 2, 0, Math.PI * 2);
+				ctx.arc(pos.x, pos.y, tool.stroke.size / 2, 0, Math.PI * 2);
 				ctx.fill();
 				// END Erase a circular shape
 
@@ -324,7 +324,7 @@ export function Canvas() {
 		switch (activeTool) {
 			case toolTypes.eraser:
 				// return 'url("/eraser.svg") -10 -10, auto';
-				return EraserCursor(getTool(activeTool).stroke.width);
+				return EraserCursor(getTool(activeTool).stroke.size);
 			case toolTypes.pencil:
 				return "crosshair";
 			default:

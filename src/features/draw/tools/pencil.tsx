@@ -2,19 +2,19 @@ import type { Tool, ToolColor, ToolStrokeWidth } from "../tools";
 
 export const pencilStrokeWidths = {
 	extraFine: {
-		width: 4,
+		size: 4,
 		tooltip: "Thin line",
 	},
 	fine: {
-		width: 8,
+		size: 8,
 		tooltip: "Small line",
 	},
 	regular: {
-		width: 16,
+		size: 16,
 		tooltip: "Medium line",
 	},
 	bold: {
-		width: 32,
+		size: 32,
 		tooltip: "Thick line",
 	},
 } satisfies Record<string, ToolStrokeWidth>;

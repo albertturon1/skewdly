@@ -34,11 +34,11 @@ export function PencilOptions() {
 			</div>
 			<div className="flex flex-col">
 				{pencilStrokeWidthsArray.map((stroke) => (
-					<Tooltip key={stroke.width} content={stroke.tooltip}>
+					<Tooltip key={stroke.size} content={stroke.tooltip}>
 						<button
 							type="button"
 							className={`h-8 w-full flex items-center justify-center px-2 rounded hover:bg-gray-100 ${
-								pencilTool.stroke.width === stroke.width ? "bg-gray-100" : ""
+								pencilTool.stroke.size === stroke.size ? "bg-gray-100" : ""
 							}`}
 							onClick={() => {
 								editToolProperties("pencil", { stroke });
@@ -47,8 +47,8 @@ export function PencilOptions() {
 							<div
 								className={"bg-black rounded-full"}
 								style={{
-									height: `${stroke.width}px`,
-									width: `${stroke.width}px`,
+									height: `${stroke.size}px`,
+									width: `${stroke.size}px`,
 								}}
 							/>
 						</button>
