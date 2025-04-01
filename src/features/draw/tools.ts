@@ -5,6 +5,7 @@ import { pencil } from "./tools/pencil";
 import { rectangle } from "./tools/rectangle";
 import { ellipse } from "./tools/ellipse";
 import { arrow } from "./tools/arrow";
+import { line } from "./tools/line";
 
 export interface Tool {
 	name: string;
@@ -32,6 +33,7 @@ export const tools = {
 	rectangle,
 	ellipse,
 	arrow,
+	line,
 	// select: {
 	//   name: "Select",
 	//   icon: "☐",
@@ -43,12 +45,6 @@ export const tools = {
 	//   icon: "◇",
 	//   type: "diamond",
 	//   tooltip: "Draw diamond shape",
-	// },
-	// line: {
-	//   name: "Line",
-	//   icon: "—",
-	//   type: "line",
-	//   tooltip: "Draw straight line",
 	// },
 	// text: {
 	//   name: "Text",

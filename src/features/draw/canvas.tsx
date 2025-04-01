@@ -237,6 +237,19 @@ export function Canvas() {
 				});
 				break;
 			}
+			case toolTypes.line: {
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.line, {
+					active: true,
+					startX: pos.x,
+					startY: pos.y,
+				});
+				break;
+			}
 			default:
 				break;
 		}
@@ -393,6 +406,27 @@ export function Canvas() {
 				ctx.stroke();
 				break;
 			}
+			case toolTypes.line: {
+				const tool = getTool(activeTool);
+				if (!tool.active) {
+					return;
+				}
+
+				// Clear the canvas and redraw the previous state
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (currentImageData) {
+					ctx.putImageData(currentImageData, 0, 0);
+				}
+
+				// Draw the line
+				ctx.beginPath();
+				ctx.strokeStyle = tool.color.value;
+				ctx.lineWidth = tool.stroke.size;
+				ctx.moveTo(tool.startX, tool.startY);
+				ctx.lineTo(pos.x, pos.y);
+				ctx.stroke();
+				break;
+			}
 			default:
 				break;
 		}
@@ -474,6 +508,20 @@ export function Canvas() {
 				editToolProperties(toolTypes.arrow, { active: false });
 
 				// Save the state after drawing the arrow
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
+				break;
+			}
+			case toolTypes.line: {
+				const tool = getTool(activeTool);
+
+				if (!tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.line, { active: false });
+
+				// Save the state after drawing the line
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				pushToHistory(imageData);
 				break;

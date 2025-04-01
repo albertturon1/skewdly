@@ -4,6 +4,7 @@ import { PencilOptions } from "./tool-options/pencil-options";
 import { RectangleOptions } from "./tool-options/rectangle-options";
 import { EllipseOptions } from "./tool-options/ellipse-options";
 import { ArrowOptions } from "./tool-options/arrow-options";
+import { LineOptions } from "./tool-options/line-options";
 import { toolTypes } from "./tools";
 
 export function ToolOptions() {
@@ -42,6 +43,13 @@ export function ToolOptions() {
 			return (
 				<ToolOptionsComponentWrapper>
 					<ArrowOptions />
+				</ToolOptionsComponentWrapper>
+			);
+		}
+		case toolTypes.line: {
+			return (
+				<ToolOptionsComponentWrapper>
+					<LineOptions />
 				</ToolOptionsComponentWrapper>
 			);
 		}
