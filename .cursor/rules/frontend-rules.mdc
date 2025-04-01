@@ -36,3 +36,14 @@ Follow these rules when you write code:
 - Implement accessibility features on elements. For example, a tag should have a tabindex=“0”, aria-label, on:click, and on:keydown, and similar attributes.
 - Use functions, for example, function toggle(){}”. Also, define a type if possible.
 - Do not delete comments if you are not told to do. If you question particular comments, ask about them in the chat
+- Do not use as unknown as to bypass TypeScript’s type system—define proper types instead.
+- Do not use `any` or `unknown` as intermediaries to force a type—ensure correct type definitions.
+- Do not use type assertions like `as X` — they are usually incorrect and bypass proper type checking.
+- Use `satisfies` for type validation instead of as to ensure correctness while keeping inference.
+- Prefer type inference over explicit type annotations—let TypeScript deduce types naturally.
+- Use `as const` when appropriate to preserve inferred types, especially for literals and immutability.
+- Use generics to enforce correct types instead of using type assertions.
+- Use type guards, conditional checks, and discriminated unions instead of `as` for narrowing types.
+- Avoid shortcuts that discard valuable type information—ensure transformations retain type safety.
+- Use validated parsing functions for type conversions instead of unsafe assertions.
+- Never use type assertions to suppress TypeScript errors—fix the root cause instead.

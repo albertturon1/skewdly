@@ -3,6 +3,7 @@ import type { GenericTools } from "./tools-context";
 import { eraser } from "./tools/eraser";
 import { pencil } from "./tools/pencil";
 import { rectangle } from "./tools/rectangle";
+import { ellipse } from "./tools/ellipse";
 
 export interface Tool {
 	name: string;
@@ -28,6 +29,7 @@ export const tools = {
 	pencil,
 	eraser,
 	rectangle,
+	ellipse,
 	// select: {
 	//   name: "Select",
 	//   icon: "☐",
@@ -39,12 +41,6 @@ export const tools = {
 	//   icon: "◇",
 	//   type: "diamond",
 	//   tooltip: "Draw diamond shape",
-	// },
-	// ellipse: {
-	//   name: "Ellipse",
-	//   icon: "○",
-	//   type: "ellipse",
-	//   tooltip: "Draw circle or ellipse",
 	// },
 	// arrow: {
 	//   name: "Arrow",

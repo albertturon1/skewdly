@@ -58,7 +58,7 @@ export const pencil = {
 	tooltip: "Free-hand drawing" as const,
 	properties: {
 		stroke: pencilStrokeWidths.regular,
-		color: pencilColors.black as ToolColor,
+		color: pencilColors.black,
 		active: false as boolean,
 	},
 } satisfies Tool;

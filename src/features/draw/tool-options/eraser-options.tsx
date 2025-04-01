@@ -16,7 +16,7 @@ export function EraserOptions() {
 					<Tooltip key={stroke.size} content={stroke.tooltip}>
 						<button
 							type="button"
-							className={`h-8 w-full flex items-center justify-center px-2 rounded  hover:bg-gray-100 ${
+							className={`min-h-8 w-full flex items-center justify-center px-2 rounded  hover:bg-gray-100 ${
 								eraserTool.stroke.size === stroke.size ? "bg-gray-100" : ""
 							}`}
 							onClick={() => {

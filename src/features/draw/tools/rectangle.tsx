@@ -68,5 +68,5 @@ export const rectangle = {
 		active: false as boolean,
 		startX: 0,
 		startY: 0,
-	} satisfies RectangleProperties,
+	},
 } satisfies Tool;

@@ -2,6 +2,7 @@ import { useTools } from "./tools-context";
 import { EraserOptions } from "./tool-options/eraser-options";
 import { PencilOptions } from "./tool-options/pencil-options";
 import { RectangleOptions } from "./tool-options/rectangle-options";
+import { EllipseOptions } from "./tool-options/ellipse-options";
 import { toolTypes } from "./tools";
 
 export function ToolOptions() {
@@ -26,6 +27,13 @@ export function ToolOptions() {
 			return (
 				<ToolOptionsComponentWrapper>
 					<RectangleOptions />
+				</ToolOptionsComponentWrapper>
+			);
+		}
+		case toolTypes.ellipse: {
+			return (
+				<ToolOptionsComponentWrapper>
+					<EllipseOptions />
 				</ToolOptionsComponentWrapper>
 			);
 		}

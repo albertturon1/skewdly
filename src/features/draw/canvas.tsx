@@ -211,6 +211,19 @@ export function Canvas() {
 				});
 				break;
 			}
+			case toolTypes.ellipse: {
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.ellipse, {
+					active: true,
+					startX: pos.x,
+					startY: pos.y,
+				});
+				break;
+			}
 			default:
 				break;
 		}
@@ -218,7 +231,9 @@ export function Canvas() {
 
 	const draw = (e: React.MouseEvent | React.TouchEvent) => {
 		const ctx = ctxRef.current;
-		if (!ctx) {
+		const canvas = canvasRef.current;
+
+		if (!ctx || !canvas) {
 			return;
 		}
 
@@ -274,8 +289,8 @@ export function Canvas() {
 			}
 			case toolTypes.rectangle: {
 				const tool = getTool(activeTool);
-				const canvas = canvasRef.current;
-				if (!tool.active || !canvas) {
+
+				if (!tool.active) {
 					return;
 				}
 
@@ -296,6 +311,33 @@ export function Canvas() {
 				ctx.strokeRect(tool.startX, tool.startY, width, height);
 				break;
 			}
+			case toolTypes.ellipse: {
+				const tool = getTool(activeTool);
+
+				if (!tool.active) {
+					return;
+				}
+
+				// Clear the canvas and redraw the previous state
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (currentImageData) {
+					ctx.putImageData(currentImageData, 0, 0);
+				}
+
+				// Calculate ellipse dimensions
+				const width = Math.abs(pos.x - tool.startX);
+				const height = Math.abs(pos.y - tool.startY);
+				const centerX = tool.startX + (pos.x - tool.startX) / 2;
+				const centerY = tool.startY + (pos.y - tool.startY) / 2;
+
+				// Draw the new ellipse
+				ctx.beginPath();
+				ctx.strokeStyle = tool.color.value;
+				ctx.lineWidth = tool.stroke.size;
+				ctx.ellipse(centerX, centerY, width / 2, height / 2, 0, 0, 2 * Math.PI);
+				ctx.stroke();
+				break;
+			}
 			default:
 				break;
 		}
@@ -304,12 +346,18 @@ export function Canvas() {
 	};
 
 	const stopDrawing = () => {
+		const canvas = canvasRef.current;
+		const ctx = ctxRef.current;
+
+		if (!canvas || !ctx) {
+			return;
+		}
+
 		switch (activeTool) {
 			case toolTypes.pencil: {
 				const tool = getTool(activeTool);
-				const canvas = canvasRef.current;
-				const ctx = ctxRef.current;
-				if (!tool.active || !canvas || !ctx) {
+
+				if (!tool.active) {
 					return;
 				}
 
@@ -321,10 +369,8 @@ export function Canvas() {
 			}
 			case toolTypes.eraser: {
 				const tool = getTool(activeTool);
-				const canvas = canvasRef.current;
-				const ctx = ctxRef.current;
 
-				if (!tool.active || !canvas || !ctx || !canUndo) {
+				if (!tool.active || !canUndo) {
 					return;
 				}
 
@@ -337,16 +383,28 @@ export function Canvas() {
 			}
 			case toolTypes.rectangle: {
 				const tool = getTool(activeTool);
-				const canvas = canvasRef.current;
-				const ctx = ctxRef.current;
 
-				if (!tool.active || !canvas || !ctx) {
+				if (!tool.active) {
 					return;
 				}
 
 				editToolProperties(toolTypes.rectangle, { active: false });
 
 				// Save the state after drawing the rectangle
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
+				break;
+			}
+			case toolTypes.ellipse: {
+				const tool = getTool(activeTool);
+
+				if (!tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.ellipse, { active: false });
+
+				// Save the state after drawing the ellipse
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				pushToHistory(imageData);
 				break;
