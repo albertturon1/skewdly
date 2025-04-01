@@ -1,4 +1,5 @@
-import type { Tool, ToolStrokeWidth } from "../tools";
+import type { Tool } from "../tools";
+import { pencilStrokeWidths } from "./pencil";
 
 export const EraserCursor = (size: number) => {
 	const realSize = size;
@@ -12,26 +13,9 @@ export const EraserCursor = (size: number) => {
 	return `url("${encodedSvg}") ${realSize / 2} ${realSize / 2}, auto`;
 };
 
-const strokeWidths: Record<string, ToolStrokeWidth> = {
-	thin: {
-		width: 4,
-		tooltip: "Thin line (2px)",
-	},
-	medium: {
-		width: 8,
-		tooltip: "Medium line (4px)",
-	},
-	thick: {
-		width: 16,
-		tooltip: "Thick line (16px)",
-	},
-	thick2: {
-		width: 32,
-		tooltip: "Thick2 line (32px)",
-	},
-};
+export const eraserStrokeWidths = pencilStrokeWidths;
 
-export const eraserStrokeWidthsArray = Object.values(strokeWidths);
+export const eraserStrokeWidthsArray = Object.values(eraserStrokeWidths);
 
 export const eraser = {
 	type: "eraser" as const,
@@ -39,7 +23,7 @@ export const eraser = {
 	icon: "🧹" as const,
 	tooltip: "Erase parts of drawing" as const,
 	properties: {
-		stroke: strokeWidths.thick,
+		stroke: eraserStrokeWidths.regular,
 		active: false as boolean,
 	},
 } satisfies Tool;

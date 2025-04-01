@@ -1,52 +1,52 @@
 import type { Tool, ToolColor, ToolStrokeWidth } from "../tools";
 
-const strokeWidths: Record<string, ToolStrokeWidth> = {
-	veryThin: {
+export const pencilStrokeWidths = {
+	extraFine: {
 		width: 4,
-		tooltip: "Very thin line (1px)",
+		tooltip: "Thin line",
 	},
-	thin: {
+	fine: {
 		width: 8,
-		tooltip: "Thin line (2px)",
+		tooltip: "Small line",
 	},
-	medium: {
+	regular: {
 		width: 16,
-		tooltip: "Medium line (4px)",
+		tooltip: "Medium line",
 	},
-	thick: {
+	bold: {
 		width: 32,
-		tooltip: "Thick line (6px)",
+		tooltip: "Thick line",
 	},
-};
+} satisfies Record<string, ToolStrokeWidth>;
 
-export const pencilStrokeWidthsArray = Object.values(strokeWidths);
+export const pencilStrokeWidthsArray = Object.values(pencilStrokeWidths);
 
 const pencilColors = {
 	black: {
 		value: "#000000",
 		tooltip: "Draw in black",
 		name: "Black",
-	} as const,
+	},
 	red: {
 		value: "#ff0000",
 		name: "Red",
 		tooltip: "Draw in red",
-	} as const,
+	},
 	green: {
 		value: "#00ff00",
 		name: "Green",
 		tooltip: "Draw in green",
-	} as const,
+	},
 	blue: {
 		value: "#0000ff",
 		name: "Blue",
 		tooltip: "Draw in blue",
-	} as const,
+	},
 	yellow: {
 		value: "#ffff00",
 		name: "Yellow",
 		tooltip: "Draw in yellow",
-	} as const,
+	},
 } satisfies Record<string, ToolColor>;
 
 export const pencilColorsArray = Object.values(pencilColors);
@@ -57,7 +57,7 @@ export const pencil = {
 	icon: "✎" as const,
 	tooltip: "Free-hand drawing" as const,
 	properties: {
-		stroke: strokeWidths.thick,
+		stroke: pencilStrokeWidths.regular,
 		color: pencilColors.black as ToolColor,
 		active: false as boolean,
 	},
