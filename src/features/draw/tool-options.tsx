@@ -5,6 +5,7 @@ import { RectangleOptions } from "./tool-options/rectangle-options";
 import { EllipseOptions } from "./tool-options/ellipse-options";
 import { ArrowOptions } from "./tool-options/arrow-options";
 import { LineOptions } from "./tool-options/line-options";
+import { DiamondOptions } from "./tool-options/diamond-options";
 import { toolTypes } from "./tools";
 
 export function ToolOptions() {
@@ -50,6 +51,13 @@ export function ToolOptions() {
 			return (
 				<ToolOptionsComponentWrapper>
 					<LineOptions />
+				</ToolOptionsComponentWrapper>
+			);
+		}
+		case toolTypes.diamond: {
+			return (
+				<ToolOptionsComponentWrapper>
+					<DiamondOptions />
 				</ToolOptionsComponentWrapper>
 			);
 		}

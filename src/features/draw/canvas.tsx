@@ -85,7 +85,8 @@ export function Canvas() {
 	// Sets up the initial canvas state (styling, grid) and saves the first history snapshot.
 	const setupCanvas = useCallback(() => {
 		const ctx = ctxRef.current;
-		if (!ctx || !canvasRef.current) {
+		const canvas = canvasRef.current;
+		if (!ctx || !canvas) {
 			return;
 		}
 
@@ -94,12 +95,7 @@ export function Canvas() {
 		ctx.lineJoin = "round";
 
 		// Capture the initial blank state (just the grid) as the first history entry.
-		const initialState = ctx.getImageData(
-			0,
-			0,
-			canvasRef.current.width,
-			canvasRef.current.height,
-		);
+		const initialState = ctx.getImageData(0, 0, canvas.width, canvas.height);
 		// Push this initial state into the history.
 		pushToHistory(initialState);
 	}, [pushToHistory]);
@@ -244,6 +240,19 @@ export function Canvas() {
 				}
 
 				editToolProperties(toolTypes.line, {
+					active: true,
+					startX: pos.x,
+					startY: pos.y,
+				});
+				break;
+			}
+			case toolTypes.diamond: {
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.diamond, {
 					active: true,
 					startX: pos.x,
 					startY: pos.y,
@@ -427,6 +436,49 @@ export function Canvas() {
 				ctx.stroke();
 				break;
 			}
+			case toolTypes.diamond: {
+				const tool = getTool(activeTool);
+				if (!tool.active) {
+					return;
+				}
+
+				// Clear the canvas and redraw the previous state
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (currentImageData) {
+					ctx.putImageData(currentImageData, 0, 0);
+				}
+
+				// Calculate diamond dimensions
+				const width = pos.x - tool.startX;
+				const height = pos.y - tool.startY;
+				const centerX = tool.startX + width / 2;
+				const centerY = tool.startY + height / 2;
+
+				// Draw the diamond with adjusted settings
+				ctx.beginPath();
+				ctx.strokeStyle = tool.color.value;
+				ctx.lineWidth = tool.stroke.size;
+				ctx.lineJoin = "round"; // Make corners rounded
+				ctx.lineCap = "round"; // Make line ends rounded
+
+				// Calculate points with slight inward offset for narrow diamonds
+				const offsetX =
+					width === 0 ? 0 : Math.sign(width) * Math.min(Math.abs(width) / 8, 2);
+				const offsetY =
+					height === 0
+						? 0
+						: Math.sign(height) * Math.min(Math.abs(height) / 8, 2);
+
+				// Draw the diamond shape
+				ctx.moveTo(centerX, tool.startY + offsetY); // Top point
+				ctx.lineTo(tool.startX + width - offsetX, centerY); // Right point
+				ctx.lineTo(centerX, tool.startY + height - offsetY); // Bottom point
+				ctx.lineTo(tool.startX + offsetX, centerY); // Left point
+				ctx.closePath();
+
+				ctx.stroke();
+				break;
+			}
 			default:
 				break;
 		}
@@ -522,6 +574,20 @@ export function Canvas() {
 				editToolProperties(toolTypes.line, { active: false });
 
 				// Save the state after drawing the line
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
+				break;
+			}
+			case toolTypes.diamond: {
+				const tool = getTool(activeTool);
+
+				if (!tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.diamond, { active: false });
+
+				// Save the state after drawing the diamond
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				pushToHistory(imageData);
 				break;
