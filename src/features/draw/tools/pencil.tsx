@@ -1,23 +1,19 @@
-import type { Tool, ToolColor, ToolStrokeWidth } from "../tools";
+import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
 
-export const pencilStrokeWidths = {
-	extraFine: {
+export const pencilStrokeWidths: ToolStrokeRecord = {
+	thin: {
 		size: 4,
 		tooltip: "Thin line",
 	},
-	fine: {
-		size: 8,
-		tooltip: "Small line",
-	},
 	regular: {
-		size: 16,
-		tooltip: "Medium line",
+		size: 10,
+		tooltip: "Regular line",
 	},
-	bold: {
-		size: 32,
+	thick: {
+		size: 20,
 		tooltip: "Thick line",
 	},
-} satisfies Record<string, ToolStrokeWidth>;
+};
 
 export const pencilStrokeWidthsArray = Object.values(pencilStrokeWidths);
 

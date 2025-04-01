@@ -22,6 +22,9 @@ export interface ToolStrokeWidth {
 	tooltip: string;
 }
 
+export type ToolStrokeName = "thin" | "regular" | "thick";
+export type ToolStrokeRecord = Record<ToolStrokeName, ToolStrokeWidth>;
+
 export type ToolColor = Readonly<{
 	value: string;
 	name: string;
@@ -48,7 +51,7 @@ export const tools = {
 	//   type: "text",
 	//   tooltip: "Add text",
 	// },
-};
+} satisfies Record<string, Tool>;
 
 export const toolTypes = Object.fromEntries(
 	Object.entries(tools).map(([key, tool]) => [key, tool.type]),

@@ -1,21 +1,19 @@
-import type { Tool } from "../tools";
-import type { ToolStrokeWidth } from "../tools";
-import type { ToolColor } from "../tools";
+import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
 
-export const ellipseStrokeWidths = {
+export const ellipseStrokeWidths: ToolStrokeRecord = {
 	thin: {
 		size: 2,
-		tooltip: "Thin ellipse border",
+		tooltip: "Thin ellipse",
 	},
 	regular: {
 		size: 4,
-		tooltip: "Regular ellipse border",
+		tooltip: "Regular ellipse",
 	},
 	thick: {
 		size: 8,
-		tooltip: "Thick ellipse border",
+		tooltip: "Thick ellipse",
 	},
-} satisfies Record<string, ToolStrokeWidth>;
+};
 
 export const ellipseStrokeWidthsArray = Object.values(ellipseStrokeWidths);
 

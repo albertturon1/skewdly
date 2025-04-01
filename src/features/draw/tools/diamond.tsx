@@ -1,8 +1,7 @@
-import type { Tool } from "../tools";
-import type { ToolStrokeWidth } from "../tools";
+import type { Tool, ToolStrokeRecord } from "../tools";
 import type { ToolColor } from "../tools";
 
-export const diamondStrokeWidths = {
+export const diamondStrokeWidths: ToolStrokeRecord = {
 	thin: {
 		size: 2,
 		tooltip: "Thin diamond",
@@ -15,7 +14,7 @@ export const diamondStrokeWidths = {
 		size: 8,
 		tooltip: "Thick diamond",
 	},
-} satisfies Record<string, ToolStrokeWidth>;
+};
 
 export const diamondStrokeWidthsArray = Object.values(diamondStrokeWidths);
 

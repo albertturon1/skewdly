@@ -16,7 +16,7 @@ function App() {
 				<div className="absolute top-0 left-0 right-0 z-10">
 					<PrimaryToolbar />
 				</div>
-				<div className="absolute top-[59px] left-0 bottom-0 z-10">
+				<div className="absolute top-[59px] left-0 z-10">
 					<ToolOptions />
 				</div>
 				<div className="absolute inset-0">

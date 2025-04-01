@@ -14,10 +14,6 @@ export const EraserCursor = (size: number) => {
 
 export const eraserStrokeWidths = {
 	...pencilStrokeWidths,
-	huge: {
-		size: 48,
-		tooltip: "Huge line",
-	},
 } satisfies Record<string, ToolStrokeWidth>;
 
 export const eraserStrokeWidthsArray = Object.values(eraserStrokeWidths);
@@ -28,7 +24,7 @@ export const eraser = {
 	icon: "🧹" as const,
 	tooltip: "Erase parts of drawing" as const,
 	properties: {
-		stroke: eraserStrokeWidths.huge,
+		stroke: eraserStrokeWidths.regular,
 		active: false as boolean,
 	},
 } satisfies Tool;
