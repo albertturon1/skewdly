@@ -7,35 +7,44 @@ export interface ColorPickerProps {
 	colors: ToolColor[];
 	toolType: ToolType;
 	selectedColor: ToolColor;
+	label?: string;
 }
 
 export function ColorPicker({
 	colors,
 	toolType,
 	selectedColor,
+	label = "Color",
 }: ColorPickerProps) {
 	const { editToolProperties } = useTools();
 
 	return (
-		<div className="flex flex-col gap-2 align-center">
-			{colors.map((color) => (
-				<Tooltip key={color.name} content={color.tooltip}>
-					<div className="w-full flex items-center justify-center">
+		<div className="flex flex-col gap-2">
+			<span className="text-xs font-medium text-gray-900">{label}</span>
+			<div className="flex gap-1.5 items-stretch">
+				{colors.map((color) => (
+					<Tooltip key={color.name} content={color.tooltip}>
 						<button
 							type="button"
-							className={`h-8 w-8 rounded-full self-center border ${
+							className={`flex flex-1 p-1 aspect-square items-center justify-center rounded-lg ring-1  ${
 								selectedColor.value === color.value
-									? "ring-2 ring-offset-2 ring-blue-500"
-									: "border-gray-300"
+									? "ring-offset-1 ring-blue-500"
+									: "ring-gray-200"
 							}`}
-							style={{ backgroundColor: color.value }}
 							onClick={() => {
 								editToolProperties(toolType, { color });
 							}}
-						/>
-					</div>
-				</Tooltip>
-			))}
+						>
+							<div className="w-7 flex justify-center items-center">
+								<div
+									className="w-full aspect-square rounded-full"
+									style={{ backgroundColor: color.value }}
+								/>
+							</div>
+						</button>
+					</Tooltip>
+				))}
+			</div>
 		</div>
 	);
 }

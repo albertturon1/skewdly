@@ -9,7 +9,6 @@ import { StrokeWidthPicker } from "./shared/stroke-width-picker";
 
 export function RectangleOptions() {
 	const { getTool } = useTools();
-
 	const rectangleTool = getTool(toolTypes.rectangle);
 
 	return (

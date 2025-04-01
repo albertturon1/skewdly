@@ -13,11 +13,15 @@ export const pencilStrokeWidths: ToolStrokeRecord = {
 		size: 20,
 		tooltip: "Thick line",
 	},
+	huge: {
+		size: 30,
+		tooltip: "Huge line",
+	},
 };
 
 export const pencilStrokeWidthsArray = Object.values(pencilStrokeWidths);
 
-const pencilColors = {
+export const pencilColors = {
 	black: {
 		value: "#000000",
 		tooltip: "Draw in black",
@@ -37,11 +41,6 @@ const pencilColors = {
 		value: "#0000ff",
 		name: "Blue",
 		tooltip: "Draw in blue",
-	},
-	yellow: {
-		value: "#ffff00",
-		name: "Yellow",
-		tooltip: "Draw in yellow",
 	},
 } satisfies Record<string, ToolColor>;
 

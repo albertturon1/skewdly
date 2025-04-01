@@ -22,7 +22,7 @@ export interface ToolStrokeWidth {
 	tooltip: string;
 }
 
-export type ToolStrokeName = "thin" | "regular" | "thick";
+export type ToolStrokeName = "thin" | "regular" | "thick" | "huge";
 export type ToolStrokeRecord = Record<ToolStrokeName, ToolStrokeWidth>;
 
 export type ToolColor = Readonly<{

@@ -12,9 +12,10 @@ export const EraserCursor = (size: number) => {
 	return `url("${encodedSvg}") ${size / 2} ${size / 2}, auto`;
 };
 
-export const eraserStrokeWidths = {
-	...pencilStrokeWidths,
-} satisfies Record<string, ToolStrokeWidth>;
+export const eraserStrokeWidths = pencilStrokeWidths satisfies Record<
+	string,
+	ToolStrokeWidth
+>;
 
 export const eraserStrokeWidthsArray = Object.values(eraserStrokeWidths);
 

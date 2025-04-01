@@ -21,9 +21,9 @@ export function StrokeWidthPicker({
 	const { editToolProperties } = useTools();
 
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="flex flex-col gap-2">
 			<span className="text-xs font-medium text-gray-900">{label}</span>
-			<div className="flex gap-2 items-stretch">
+			<div className="flex gap-1.5 items-stretch">
 				{strokes.map((stroke) => (
 					<Tooltip key={stroke.size} content={stroke.tooltip}>
 						<button
@@ -35,7 +35,7 @@ export function StrokeWidthPicker({
 								editToolProperties(toolType, { stroke });
 							}}
 						>
-							<div className="w-8 flex justify-center items-center">
+							<div className="w-7 flex justify-center items-center">
 								{variant === "dot" ? (
 									<div
 										className=" bg-black rounded-full aspect-square"

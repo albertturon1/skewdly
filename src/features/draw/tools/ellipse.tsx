@@ -1,4 +1,5 @@
 import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
+import { pencilColors } from "./pencil";
 
 export const ellipseStrokeWidths: ToolStrokeRecord = {
 	thin: {
@@ -13,37 +14,15 @@ export const ellipseStrokeWidths: ToolStrokeRecord = {
 		size: 8,
 		tooltip: "Thick ellipse",
 	},
+	huge: {
+		size: 24,
+		tooltip: "Huge ellipse",
+	},
 };
 
 export const ellipseStrokeWidthsArray = Object.values(ellipseStrokeWidths);
 
-const ellipseColors = {
-	black: {
-		value: "#000000",
-		tooltip: "Draw ellipse in black",
-		name: "Black",
-	},
-	red: {
-		value: "#ff0000",
-		name: "Red",
-		tooltip: "Draw ellipse in red",
-	},
-	green: {
-		value: "#00ff00",
-		name: "Green",
-		tooltip: "Draw ellipse in green",
-	},
-	blue: {
-		value: "#0000ff",
-		name: "Blue",
-		tooltip: "Draw ellipse in blue",
-	},
-	yellow: {
-		value: "#ffff00",
-		name: "Yellow",
-		tooltip: "Draw ellipse in yellow",
-	},
-} satisfies Record<string, ToolColor>;
+const ellipseColors = pencilColors satisfies Record<string, ToolColor>;
 
 export const ellipseColorsArray = Object.values(ellipseColors);
 

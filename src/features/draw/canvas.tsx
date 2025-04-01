@@ -431,6 +431,8 @@ export function Canvas() {
 				ctx.beginPath();
 				ctx.strokeStyle = tool.color.value;
 				ctx.lineWidth = tool.stroke.size;
+				ctx.lineJoin = "round"; // Make corners rounded
+				ctx.lineCap = "round"; // Make line ends rounded
 				ctx.moveTo(tool.startX, tool.startY);
 				ctx.lineTo(pos.x, pos.y);
 				ctx.stroke();

@@ -1,8 +1,8 @@
-import type { Tool } from "../tools";
-import type { ToolStrokeWidth } from "../tools";
+import type { Tool, ToolStrokeRecord } from "../tools";
 import type { ToolColor } from "../tools";
+import { pencilColors } from "./pencil";
 
-export const lineStrokeWidths = {
+export const lineStrokeWidths: ToolStrokeRecord = {
 	thin: {
 		size: 2,
 		tooltip: "Thin line",
@@ -15,37 +15,15 @@ export const lineStrokeWidths = {
 		size: 8,
 		tooltip: "Thick line",
 	},
-} satisfies Record<string, ToolStrokeWidth>;
+	huge: {
+		size: 24,
+		tooltip: "Huge line",
+	},
+};
 
 export const lineStrokeWidthsArray = Object.values(lineStrokeWidths);
 
-const lineColors = {
-	black: {
-		value: "#000000",
-		tooltip: "Draw line in black",
-		name: "Black",
-	},
-	red: {
-		value: "#ff0000",
-		name: "Red",
-		tooltip: "Draw line in red",
-	},
-	green: {
-		value: "#00ff00",
-		name: "Green",
-		tooltip: "Draw line in green",
-	},
-	blue: {
-		value: "#0000ff",
-		name: "Blue",
-		tooltip: "Draw line in blue",
-	},
-	yellow: {
-		value: "#ffff00",
-		name: "Yellow",
-		tooltip: "Draw line in yellow",
-	},
-} satisfies Record<string, ToolColor>;
+const lineColors = pencilColors satisfies Record<string, ToolColor>;
 
 export const lineColorsArray = Object.values(lineColors);
 
