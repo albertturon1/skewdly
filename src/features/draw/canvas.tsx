@@ -224,6 +224,19 @@ export function Canvas() {
 				});
 				break;
 			}
+			case toolTypes.arrow: {
+				const tool = getTool(activeTool);
+				if (tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.arrow, {
+					active: true,
+					startX: pos.x,
+					startY: pos.y,
+				});
+				break;
+			}
 			default:
 				break;
 		}
@@ -338,6 +351,48 @@ export function Canvas() {
 				ctx.stroke();
 				break;
 			}
+			case toolTypes.arrow: {
+				const tool = getTool(activeTool);
+				if (!tool.active) {
+					return;
+				}
+
+				// Clear the canvas and redraw the previous state
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (currentImageData) {
+					ctx.putImageData(currentImageData, 0, 0);
+				}
+
+				// Calculate arrow dimensions
+				const dx = pos.x - tool.startX;
+				const dy = pos.y - tool.startY;
+				const angle = Math.atan2(dy, dx);
+				const length = Math.sqrt(dx * dx + dy * dy);
+				const arrowHeadLength = Math.min(20, length / 3); // Adjust arrow head size based on length
+
+				// Draw the arrow line
+				ctx.beginPath();
+				ctx.strokeStyle = tool.color.value;
+				ctx.lineWidth = tool.stroke.size;
+				ctx.moveTo(tool.startX, tool.startY);
+				ctx.lineTo(pos.x, pos.y);
+				ctx.stroke();
+
+				// Draw the arrow head
+				ctx.beginPath();
+				ctx.moveTo(pos.x, pos.y);
+				ctx.lineTo(
+					pos.x - arrowHeadLength * Math.cos(angle - Math.PI / 6),
+					pos.y - arrowHeadLength * Math.sin(angle - Math.PI / 6),
+				);
+				ctx.moveTo(pos.x, pos.y);
+				ctx.lineTo(
+					pos.x - arrowHeadLength * Math.cos(angle + Math.PI / 6),
+					pos.y - arrowHeadLength * Math.sin(angle + Math.PI / 6),
+				);
+				ctx.stroke();
+				break;
+			}
 			default:
 				break;
 		}
@@ -405,6 +460,20 @@ export function Canvas() {
 				editToolProperties(toolTypes.ellipse, { active: false });
 
 				// Save the state after drawing the ellipse
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				pushToHistory(imageData);
+				break;
+			}
+			case toolTypes.arrow: {
+				const tool = getTool(activeTool);
+
+				if (!tool.active) {
+					return;
+				}
+
+				editToolProperties(toolTypes.arrow, { active: false });
+
+				// Save the state after drawing the arrow
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				pushToHistory(imageData);
 				break;
