@@ -22,7 +22,7 @@ export const eraserStrokeWidthsArray = Object.values(eraserStrokeWidths);
 export const eraser = {
 	type: "eraser" as const,
 	name: "Eraser" as const,
-	icon: "🧹" as const,
+	icon: <img src="/eraser.svg" alt="Eraser" className="h-4 w-4" />,
 	tooltip: "Erase parts of drawing" as const,
 	properties: {
 		stroke: eraserStrokeWidths.regular,

@@ -5,19 +5,19 @@ import { pencilColors } from "./pencil";
 
 export const rectangleStrokeWidths: ToolStrokeRecord = {
 	thin: {
-		size: 2,
+		size: 3,
 		tooltip: "Thin rectangle",
 	},
 	regular: {
-		size: 4,
+		size: 6,
 		tooltip: "Regular rectangle",
 	},
 	thick: {
-		size: 8,
+		size: 12,
 		tooltip: "Thick rectangle",
 	},
 	huge: {
-		size: 24,
+		size: 22,
 		tooltip: "Huge rectangle",
 	},
 } satisfies Record<string, ToolStrokeWidth>;
@@ -39,7 +39,8 @@ export interface RectangleProperties {
 export const rectangle = {
 	type: "rectangle" as const,
 	name: "Rectangle" as const,
-	icon: "□" as const,
+	icon: <img src="/rectangle.svg" alt="Rectangle" className="h-4 w-4" />,
+
 	tooltip: "Draw rectangle" as const,
 	properties: {
 		stroke: rectangleStrokeWidths.regular,

@@ -1,39 +1,21 @@
+import { ToolbarButton } from "./toolbar-button";
 import { useTools } from "./tools-context";
 
 export function HistoryControllers() {
 	const { undo, redo, clearCanvas, canRedo, canUndo } = useTools();
 
 	return (
-		<>
-			<div className="flex items-center gap-1 justify-center">
-				<button
-					type="button"
-					className="p-2 rounded  hover:bg-gray-100 disabled:opacity-50"
-					onClick={undo}
-					disabled={!canUndo}
-				>
-					↩
-				</button>
+		<div className="flex gap-1 justify-center items-stretch">
+			<ToolbarButton onClick={undo} disabled={!canUndo}>
+				<img src="/undo.svg" alt="Undo" className={"h-4 w-4"} />
+			</ToolbarButton>
+			<ToolbarButton onClick={redo} disabled={!canRedo}>
+				<img src="/redo.svg" alt="Redo" className={"h-4 w-4"} />
+			</ToolbarButton>
 
-				<button
-					type="button"
-					className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
-					onClick={redo}
-					disabled={!canRedo}
-				>
-					↪
-				</button>
-				<button
-					type="button"
-					className={
-						"p-2 rounded hover:bg-gray-100 border-gray-200 disabled:opacity-50 "
-					}
-					onClick={clearCanvas}
-					disabled={!canRedo && !canUndo}
-				>
-					⌫
-				</button>
-			</div>
-		</>
+			<ToolbarButton onClick={clearCanvas} disabled={!canRedo && !canUndo}>
+				<img src="/delete.svg" alt="Clean canvas" className={"h-4 w-4"} />
+			</ToolbarButton>
+		</div>
 	);
 }

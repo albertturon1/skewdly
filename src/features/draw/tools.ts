@@ -32,13 +32,13 @@ export type ToolColor = Readonly<{
 }>;
 
 export const tools = {
-	pencil,
-	eraser,
 	rectangle,
 	ellipse,
+	diamond,
 	arrow,
 	line,
-	diamond,
+	pencil,
+	eraser,
 	// select: {
 	//   name: "Select",
 	//   icon: "☐",

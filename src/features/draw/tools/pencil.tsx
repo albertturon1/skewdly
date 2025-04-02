@@ -2,19 +2,19 @@ import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
 
 export const pencilStrokeWidths: ToolStrokeRecord = {
 	thin: {
-		size: 4,
+		size: 3,
 		tooltip: "Thin line",
 	},
 	regular: {
-		size: 10,
+		size: 6,
 		tooltip: "Regular line",
 	},
 	thick: {
-		size: 20,
+		size: 12,
 		tooltip: "Thick line",
 	},
 	huge: {
-		size: 30,
+		size: 24,
 		tooltip: "Huge line",
 	},
 };
@@ -49,7 +49,7 @@ export const pencilColorsArray = Object.values(pencilColors);
 export const pencil = {
 	type: "pencil" as const,
 	name: "Pencil" as const,
-	icon: "✎" as const,
+	icon: <img src="/pencil.svg" alt="Pencil" className="h-4 w-4" />,
 	tooltip: "Free-hand drawing" as const,
 	properties: {
 		stroke: pencilStrokeWidths.regular,

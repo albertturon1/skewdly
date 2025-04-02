@@ -4,15 +4,15 @@ import { pencilColors } from "./pencil";
 
 export const diamondStrokeWidths: ToolStrokeRecord = {
 	thin: {
-		size: 2,
+		size: 3,
 		tooltip: "Thin diamond",
 	},
 	regular: {
-		size: 4,
+		size: 6,
 		tooltip: "Regular diamond",
 	},
 	thick: {
-		size: 8,
+		size: 12,
 		tooltip: "Thick diamond",
 	},
 	huge: {
@@ -30,7 +30,7 @@ export const diamondColorsArray = Object.values(diamondColors);
 export const diamond = {
 	type: "diamond" as const,
 	name: "Diamond" as const,
-	icon: "◇" as const,
+	icon: <img src="/diamond.svg" alt="Diamond" className="h-3.5 w-3.5" />,
 	tooltip: "Draw diamond" as const,
 	properties: {
 		stroke: diamondStrokeWidths.regular,

@@ -30,7 +30,7 @@ export const lineColorsArray = Object.values(lineColors);
 export const line = {
 	type: "line" as const,
 	name: "Line" as const,
-	icon: "—" as const,
+	icon: <img src="/horizontal-line.svg" alt="Line" className="h-4.5 w-4.5" />,
 	tooltip: "Draw line" as const,
 	properties: {
 		stroke: lineStrokeWidths.regular,

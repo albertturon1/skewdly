@@ -1,25 +1,23 @@
 import { useTools } from "./tools-context";
 import { tools } from "./tools";
+import { ToolbarButton } from "./toolbar-button";
 
 export function ToolsControllers() {
 	const { activeTool, setActiveTool } = useTools();
 
 	return (
-		<div className="border border-gray-200 rounded-md overflow-hidden flex">
+		<div className="flex gap-x-1">
 			{Object.values(tools).map((t) => {
 				return (
-					<button
+					<ToolbarButton
 						key={t.name}
-						type="button"
-						className={`p-2 h-10 w-10 flex items-center justify-center text-lg hover:bg-gray-100 ${
-							activeTool === t.type ? "bg-gray-100" : ""
-						}`}
+						containerClass={`${activeTool === t.type ? "bg-slate-200" : ""}`}
 						onClick={() => {
 							setActiveTool(t.type);
 						}}
 					>
 						{t.icon}
-					</button>
+					</ToolbarButton>
 				);
 			})}
 		</div>

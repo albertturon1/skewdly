@@ -3,15 +3,15 @@ import { pencilColors } from "./pencil";
 
 export const ellipseStrokeWidths: ToolStrokeRecord = {
 	thin: {
-		size: 2,
+		size: 3,
 		tooltip: "Thin ellipse",
 	},
 	regular: {
-		size: 4,
+		size: 6,
 		tooltip: "Regular ellipse",
 	},
 	thick: {
-		size: 8,
+		size: 12,
 		tooltip: "Thick ellipse",
 	},
 	huge: {
@@ -29,7 +29,7 @@ export const ellipseColorsArray = Object.values(ellipseColors);
 export const ellipse = {
 	type: "ellipse" as const,
 	name: "Ellipse" as const,
-	icon: "○" as const,
+	icon: <img src="/circle.svg" alt="Ellipse" className="h-4 w-4" />,
 	tooltip: "Draw circle or ellipse" as const,
 	properties: {
 		stroke: ellipseStrokeWidths.regular,
