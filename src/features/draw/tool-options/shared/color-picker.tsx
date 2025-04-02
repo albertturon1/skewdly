@@ -1,6 +1,7 @@
 import { useTools } from "../../tools-context";
 import type { ToolColor } from "../../tools";
 import type { ToolType } from "../../tools";
+import { ToolOptionButton } from "./tool-option-button";
 
 export interface ColorPickerProps {
 	colors: ToolColor[];
@@ -22,25 +23,18 @@ export function ColorPicker({
 			<span className="text-xs font-medium text-gray-900">{label}</span>
 			<div className="flex gap-1.5 items-stretch">
 				{colors.map((color) => (
-					<button
+					<ToolOptionButton
 						key={color.name}
-						type="button"
-						className={`flex flex-1 p-1 aspect-square items-center justify-center rounded-lg ring-1  ${
-							selectedColor.value === color.value
-								? "ring-offset-1 ring-blue-500"
-								: "ring-gray-200"
-						}`}
+						isSelected={selectedColor.value === color.value}
 						onClick={() => {
 							editToolProperties(toolType, { color });
 						}}
 					>
-						<div className="w-7 flex justify-center items-center">
-							<div
-								className="w-full aspect-square rounded-full"
-								style={{ backgroundColor: color.value }}
-							/>
-						</div>
-					</button>
+						<div
+							className="w-full aspect-square rounded-full"
+							style={{ backgroundColor: color.value }}
+						/>
+					</ToolOptionButton>
 				))}
 			</div>
 		</div>

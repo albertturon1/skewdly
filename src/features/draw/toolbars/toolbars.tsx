@@ -1,18 +1,18 @@
 import { HistoryControllers } from "./history-controllers";
 import { ToolsControllers } from "./tools-controllers";
 import { useCallback, useState } from "react";
-import { EraserOptions } from "./tool-options/eraser-options";
-import { PencilOptions } from "./tool-options/pencil-options";
-import { RectangleOptions } from "./tool-options/rectangle-options";
-import { EllipseOptions } from "./tool-options/ellipse-options";
-import { ArrowOptions } from "./tool-options/arrow-options";
-import { LineOptions } from "./tool-options/line-options";
-import { DiamondOptions } from "./tool-options/diamond-options";
-import { toolTypes } from "./tools";
-import type { ToolType } from "./tools";
+import { EraserOptions } from "../tool-options/eraser-options";
+import { PencilOptions } from "../tool-options/pencil-options";
+import { RectangleOptions } from "../tool-options/rectangle-options";
+import { EllipseOptions } from "../tool-options/ellipse-options";
+import { ArrowOptions } from "../tool-options/arrow-options";
+import { LineOptions } from "../tool-options/line-options";
+import { DiamondOptions } from "../tool-options/diamond-options";
+import { toolTypes } from "../tools";
+import type { ToolType } from "../tools";
 import type { ReactElement, ReactNode, RefCallback } from "react";
-import { useTools } from "./tools-context";
-import { cn } from "../../lib/utils";
+import { useTools } from "../tools-context";
+import { cn } from "../../../lib/utils";
 
 const TOOL_COMPONENTS: Record<ToolType, () => ReactElement> = {
 	[toolTypes.pencil]: PencilOptions,

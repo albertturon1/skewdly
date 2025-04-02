@@ -1,6 +1,7 @@
 import { useTools } from "../../tools-context";
 import type { ToolStrokeWidth } from "../../tools";
 import type { ToolType } from "../../tools";
+import { ToolOptionButton } from "./tool-option-button";
 
 export interface StrokeWidthPickerProps {
 	strokes: ToolStrokeWidth[];
@@ -24,34 +25,29 @@ export function StrokeWidthPicker({
 			<span className="text-xs font-medium text-gray-900">{label}</span>
 			<div className="flex gap-1.5 items-stretch">
 				{strokes.map((stroke) => (
-					<button
+					<ToolOptionButton
 						key={stroke.size}
-						type="button"
-						className={`flex flex-1 p-1 aspect-square items-center justify-center rounded-lg bg-gray-100 hover:bg-slate-350 ${
-							selectedStroke.size === stroke.size ? "bg-slate-300" : ""
-						}`}
+						isSelected={selectedStroke.size === stroke.size}
 						onClick={() => {
 							editToolProperties(toolType, { stroke });
 						}}
 					>
-						<div className="w-7 flex justify-center items-center">
-							{variant === "dot" ? (
-								<div
-									className=" bg-black rounded-full aspect-square"
-									style={{
-										height: `${stroke.size}px`,
-									}}
-								/>
-							) : (
-								<div
-									className="bg-black rounded-sm aspect-square"
-									style={{
-										height: `${stroke.size}px`,
-									}}
-								/>
-							)}
-						</div>
-					</button>
+						{variant === "dot" ? (
+							<div
+								className="bg-black rounded-full aspect-square"
+								style={{
+									height: `${stroke.size}px`,
+								}}
+							/>
+						) : (
+							<div
+								className="bg-black rounded-sm aspect-square"
+								style={{
+									height: `${stroke.size}px`,
+								}}
+							/>
+						)}
+					</ToolOptionButton>
 				))}
 			</div>
 		</div>

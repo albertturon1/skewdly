@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolsProvider } from "../features/draw/tools-context";
-import { Toolbars } from "../features/draw/toolbars";
+import { Toolbars } from "../features/draw/toolbars/toolbars";
 import { toolsInitialState } from "../features/draw/tools";
 import { Canvas } from "../features/draw/canvas";
 

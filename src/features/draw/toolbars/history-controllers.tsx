@@ -1,5 +1,5 @@
 import { ToolbarButton } from "./toolbar-button";
-import { useTools } from "./tools-context";
+import { useTools } from "../tools-context";
 
 export function HistoryControllers() {
 	const { undo, redo, clearCanvas, canRedo, canUndo } = useTools();
