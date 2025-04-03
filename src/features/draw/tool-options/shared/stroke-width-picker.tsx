@@ -1,7 +1,7 @@
-import { useTools } from "../../tools-context";
-import type { ToolStrokeWidth } from "../../tools";
-import type { ToolType } from "../../tools";
-import { ToolOptionButton } from "./tool-option-button";
+import { useTools } from "@/features/draw/tools-context";
+import type { ToolStrokeWidth } from "@/features/draw/tools";
+import type { ToolType } from "@/features/draw/tools";
+import { ToolOptionButton } from "@/features/draw/tool-options/shared/tool-option-button";
 
 export interface StrokeWidthPickerProps {
 	strokes: ToolStrokeWidth[];

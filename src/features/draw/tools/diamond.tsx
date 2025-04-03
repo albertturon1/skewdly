@@ -1,6 +1,6 @@
-import type { Tool, ToolStrokeRecord } from "../tools";
-import type { ToolColor } from "../tools";
-import { pencilColors } from "./pencil";
+import type { Tool, ToolStrokeRecord } from "@/features/draw/tools";
+import type { ToolColor } from "@/features/draw/tools";
+import { pencilColors } from "@/features/draw/tools/pencil";
 
 export const diamondStrokeWidths: ToolStrokeRecord = {
 	thin: {

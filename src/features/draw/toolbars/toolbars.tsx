@@ -1,18 +1,19 @@
-import { HistoryControllers } from "./history-controllers";
-import { ToolsControllers } from "./tools-controllers";
-import { useCallback, useState } from "react";
-import { EraserOptions } from "../tool-options/eraser-options";
-import { PencilOptions } from "../tool-options/pencil-options";
-import { RectangleOptions } from "../tool-options/rectangle-options";
-import { EllipseOptions } from "../tool-options/ellipse-options";
-import { ArrowOptions } from "../tool-options/arrow-options";
-import { LineOptions } from "../tool-options/line-options";
-import { DiamondOptions } from "../tool-options/diamond-options";
-import { toolTypes } from "../tools";
-import type { ToolType } from "../tools";
 import type { ReactElement, ReactNode, RefCallback } from "react";
-import { useTools } from "../tools-context";
-import { cn } from "../../../lib/utils";
+import { useCallback, useState } from "react";
+import { HistoryControllers } from "@/features/draw/toolbars/history-controllers";
+import { ToolsControllers } from "@/features/draw/toolbars/tools-controllers";
+import { SessionShareDialog } from "@/features/draw/toolbars/session-share-dialog";
+import { EllipseOptions } from "@/features/draw/tool-options/ellipse-options";
+import { EraserOptions } from "@/features/draw/tool-options/eraser-options";
+import { PencilOptions } from "@/features/draw/tool-options/pencil-options";
+import { RectangleOptions } from "@/features/draw/tool-options/rectangle-options";
+import { ArrowOptions } from "@/features/draw/tool-options/arrow-options";
+import { LineOptions } from "@/features/draw/tool-options/line-options";
+import { DiamondOptions } from "@/features/draw/tool-options/diamond-options";
+import { toolTypes } from "@/features/draw/tools";
+import type { ToolType } from "@/features/draw/tools";
+import { useTools } from "@/features/draw/tools-context";
+import { cn } from "@/lib/utils";
 
 const TOOL_COMPONENTS: Record<ToolType, () => ReactElement> = {
 	[toolTypes.pencil]: PencilOptions,
@@ -53,6 +54,7 @@ export function Toolbars() {
 			>
 				<ToolsControllers />
 				<HistoryControllers />
+				<SessionShareDialog />
 			</ToolbarContainer>
 			<ToolbarContainer
 				className="left-2.5 flex-col gap-y-5 p-4 border-r"

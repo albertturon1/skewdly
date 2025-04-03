@@ -1,5 +1,5 @@
-import type { Tool, ToolStrokeWidth } from "../tools";
-import { pencilStrokeWidths } from "./pencil";
+import type { Tool, ToolStrokeWidth } from "@/features/draw/tools";
+import { pencilStrokeWidths } from "@/features/draw/tools/pencil";
 
 export const EraserCursor = (size: number) => {
 	const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 330 330">

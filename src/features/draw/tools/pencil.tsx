@@ -1,4 +1,4 @@
-import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
+import type { Tool, ToolColor, ToolStrokeRecord } from "@/features/draw/tools";
 
 export const pencilStrokeWidths: ToolStrokeRecord = {
 	thin: {

@@ -1,7 +1,7 @@
-import { useTools } from "../tools-context";
-import { toolTypes } from "../tools";
-import { eraserStrokeWidthsArray } from "../tools/eraser";
-import { StrokeWidthPicker } from "./shared/stroke-width-picker";
+import { useTools } from "@/features/draw/tools-context";
+import { toolTypes } from "@/features/draw/tools";
+import { eraserStrokeWidthsArray } from "@/features/draw/tools/eraser";
+import { StrokeWidthPicker } from "@/features/draw/tool-options/shared/stroke-width-picker";
 
 export function EraserOptions() {
 	const { getTool } = useTools();

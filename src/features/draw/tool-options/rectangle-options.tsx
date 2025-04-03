@@ -1,11 +1,11 @@
-import { useTools } from "../tools-context";
-import { toolTypes } from "../tools";
+import { useTools } from "@/features/draw/tools-context";
+import { toolTypes } from "@/features/draw/tools";
 import {
 	rectangleColorsArray,
 	rectangleStrokeWidthsArray,
-} from "../tools/rectangle";
-import { ColorPicker } from "./shared/color-picker";
-import { StrokeWidthPicker } from "./shared/stroke-width-picker";
+} from "@/features/draw/tools/rectangle";
+import { ColorPicker } from "@/features/draw/tool-options/shared/color-picker";
+import { StrokeWidthPicker } from "@/features/draw/tool-options/shared/stroke-width-picker";
 
 export function RectangleOptions() {
 	const { getTool } = useTools();

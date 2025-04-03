@@ -1,6 +1,6 @@
-import { useTools } from "../tools-context";
-import { tools } from "../tools";
-import { ToolbarButton } from "./toolbar-button";
+import { useTools } from "@/features/draw/tools-context";
+import { tools } from "@/features/draw/tools";
+import { ToolbarButton } from "@/features/draw/toolbars/toolbar-button";
 
 export function ToolsControllers() {
 	const { activeTool, setActiveTool } = useTools();

@@ -1,8 +1,11 @@
-import { useTools } from "../tools-context";
-import { toolTypes } from "../tools";
-import { ellipseColorsArray, ellipseStrokeWidthsArray } from "../tools/ellipse";
-import { ColorPicker } from "./shared/color-picker";
-import { StrokeWidthPicker } from "./shared/stroke-width-picker";
+import { useTools } from "@/features/draw/tools-context";
+import { toolTypes } from "@/features/draw/tools";
+import {
+	ellipseColorsArray,
+	ellipseStrokeWidthsArray,
+} from "@/features/draw/tools/ellipse";
+import { ColorPicker } from "@/features/draw/tool-options/shared/color-picker";
+import { StrokeWidthPicker } from "@/features/draw/tool-options/shared/stroke-width-picker";
 
 export function EllipseOptions() {
 	const { getTool } = useTools();

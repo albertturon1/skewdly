@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
-import { EraserCursor } from "./tools/eraser";
-import { useTools } from "./tools-context";
-import { toolTypes } from "./tools";
+import { EraserCursor } from "@/features/draw/tools/eraser";
+import { useTools } from "@/features/draw/tools-context";
+import { toolTypes } from "@/features/draw/tools";
 
 const INITIAL_SIZE = 2000;
 

@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
-import type { GenericTools } from "./tools-context";
-import { eraser } from "./tools/eraser";
-import { pencil } from "./tools/pencil";
-import { rectangle } from "./tools/rectangle";
-import { ellipse } from "./tools/ellipse";
-import { arrow } from "./tools/arrow";
-import { line } from "./tools/line";
-import { diamond } from "./tools/diamond";
+import type { GenericTools } from "@/features/draw/tools-context";
+import { eraser } from "@/features/draw/tools/eraser";
+import { pencil } from "@/features/draw/tools/pencil";
+import { rectangle } from "@/features/draw/tools/rectangle";
+import { ellipse } from "@/features/draw/tools/ellipse";
+import { arrow } from "@/features/draw/tools/arrow";
+import { line } from "@/features/draw/tools/line";
+import { diamond } from "@/features/draw/tools/diamond";
 
 export interface Tool {
 	name: string;

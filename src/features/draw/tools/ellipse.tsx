@@ -1,5 +1,5 @@
-import type { Tool, ToolColor, ToolStrokeRecord } from "../tools";
-import { pencilColors } from "./pencil";
+import type { Tool, ToolColor, ToolStrokeRecord } from "@/features/draw/tools";
+import { pencilColors } from "@/features/draw/tools/pencil";
 
 export const ellipseStrokeWidths: ToolStrokeRecord = {
 	thin: {

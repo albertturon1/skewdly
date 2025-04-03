@@ -7,8 +7,8 @@ import {
 	useReducer,
 } from "react";
 import type { ReactNode } from "react";
-import type { toolsInitialState, Tool } from "./tools";
-import { INITIAL_HISTORY_STATE, historyReducer } from "./history";
+import type { toolsInitialState, Tool } from "@/features/draw/tools";
+import { INITIAL_HISTORY_STATE, historyReducer } from "@/features/draw/history";
 import type { PartialDeep } from "type-fest";
 
 export type GenericTools = { activeTool: string; tools: Record<string, Tool> };
